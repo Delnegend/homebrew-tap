@@ -1,0 +1,57 @@
+name: Update Formula
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Check for release updates
+        id: releases
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          updated=""
+          for formula in Formula/*.rb; do
+            repo=$(grep -oP 'homepage "https://github.com/\K[^/]+/[^/]+' "$formula")
+            latest=$(gh api "repos/${repo}/releases/latest" --jq '.tag_name' | sed 's/^v//')
+            current=$(grep -oP 'tags/v\K[0-9.]+' "$formula")
+            echo "::notice::$formula: current=$current latest=$latest"
+            if [ "$latest" = "$current" ]; then
+              continue
+            fi
+            curl -fsSL "https://codeload.github.com/${repo}/tar.gz/refs/tags/v${latest}" -o /tmp/tarball
+            sha=$(sha256sum /tmp/tarball | cut -d' ' -f1)
+            sed -i "s|\(tags/v\)[0-9.]*\(\.tar\.gz\)|\1${latest}\2|" "$formula"
+            sed -i "s|\(sha256 \"\)[a-f0-9]*\(\"\)|\1${sha}\2|" "$formula"
+            updated="${updated}${formula}: v${current} -> v${latest}\n"
+          done
+          if [ -n "$updated" ]; then
+            echo "updated=true" >> "$GITHUB_OUTPUT"
+            printf "%b" "$updated" > /tmp/updated.txt
+          fi
+
+      - name: Create PR
+        if: steps.releases.outputs.updated == 'true'
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(deps): update formulas to latest releases'
+          title: 'chore(deps): update formulas to latest releases'
+          body: |
+            Release updates detected:
+            ```
+            $(cat /tmp/updated.txt)
+            ```
+          branch: chore/update-formulas
+          delete-branch: true

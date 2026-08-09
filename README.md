@@ -15,4 +15,4 @@ brew install mikrotik-mcp
 
 ## Updates
 
-Formulas are kept in sync with upstream releases by Renovate.
+Formulas are kept in sync with upstream releases by a scheduled GitHub Action that opens a PR when a new release is published.
