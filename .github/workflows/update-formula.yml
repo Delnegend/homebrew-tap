@@ -24,7 +24,7 @@ jobs:
           updated=""
           for formula in Formula/*.rb; do
             repo=$(grep -oP 'homepage "https://github.com/\K[^/]+/[^/]+' "$formula")
-            latest=$(git ls-remote --tags "https://github.com/${repo}.git" | awk -F'/' '{print $NF}' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/^v//')
+            latest=$(git -c credential.helper= ls-remote --tags "https://github.com/${repo}.git" | awk -F'/' '{print $NF}' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/^v//')
             current=$(grep -oP 'tags/v\K[0-9.]+' "$formula")
             echo "::notice::$formula: current=$current latest=$latest"
             if [ "$latest" = "$current" ]; then
