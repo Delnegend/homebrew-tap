@@ -24,7 +24,7 @@ jobs:
           updated=""
           for formula in Formula/*.rb; do
             repo=$(grep -oP 'homepage "https://github.com/\K[^/]+/[^/]+' "$formula")
-            latest=$(gh api "repos/${repo}/releases/latest" --jq '.tag_name' | sed 's/^v//')
+            latest=$(curl -fsSL "https://api.github.com/repos/${repo}/releases/latest" | jq -r '.tag_name' | sed 's/^v//')
             current=$(grep -oP 'tags/v\K[0-9.]+' "$formula")
             echo "::notice::$formula: current=$current latest=$latest"
             if [ "$latest" = "$current" ]; then
