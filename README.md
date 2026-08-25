@@ -6,7 +6,9 @@ Homebrew formulas for [Delnegend's](https://github.com/Delnegend) command-line t
 
 ```bash
 brew tap Delnegend/tap
-brew install mikrotik-mcp rsrpc
+
+brew install mikrotik-mcp
+brew install rsrpc
 ```
 
 ## Formulas
