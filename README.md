@@ -12,6 +12,7 @@ brew install mikrotik-mcp
 ## Formulas
 
 - **mikrotik-mcp** — MCP server for managing MikroTik routers through the RouterOS API ([repo](https://github.com/Delnegend/mikrotik-mcp-server))
+- **rsrpc** — Alternative Discord RPC server ([repo](https://github.com/SpikeHD/rsRPC))
 
 ## Updates
 
