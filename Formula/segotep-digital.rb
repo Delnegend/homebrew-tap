@@ -11,9 +11,7 @@
     strategy :github_releases
   end
 
-  depends_on "pkg-config" => :build
   depends_on "rust" => :build
-  depends_on "libusb"
   depends_on :linux
 
   def install
