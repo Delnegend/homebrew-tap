@@ -41,21 +41,11 @@ class SegotepDigital < Formula
 
         segotep-digital -v
 
-      Or as a background daemon via systemd --user:
+      Or as a background daemon via systemd --user, reusing the shipped unit:
 
         mkdir -p ~/.config/systemd/user
-        cat > ~/.config/systemd/user/segotep-digital.service <<UNIT
-        [Unit]
-        Description=Segotep Digital AIO display service
-
-        [Service]
-        Type=simple
-        ExecStart=#{HOMEBREW_PREFIX}/bin/segotep-digital
-        Restart=on-failure
-
-        [Install]
-        WantedBy=default.target
-        UNIT
+        sed -e 's|/usr/local/bin|#{HOMEBREW_PREFIX}/bin|' -e 's|multi-user.target|default.target|' \\
+          #{opt_pkgshare}/segotep-digital.service > ~/.config/systemd/user/segotep-digital.service
         systemctl --user daemon-reload
         systemctl --user enable --now segotep-digital.service
     EOS
