@@ -1,13 +1,10 @@
-﻿class SegotepDigital < Formula
+class SegotepDigital < Formula
   desc "Driver and daemon for Segotep Ice Moon / Digital series AIO CPU coolers"
   homepage "https://github.com/Delnegend/segotep-digital"
   version "0.1.0"
   license any_of: ["MIT", "Apache-2.0"]
-  head "https://github.com/Delnegend/segotep-digital.git", branch: "main"
-
-  livecheck do
-    url "https://github.com/Delnegend/segotep-digital/releases"
-    strategy :github_releases
+  head "https://github.com/Delnegend/segotep-digital.git" do
+    depends_on "rust" => :build
   end
 
   depends_on :linux
@@ -21,10 +18,6 @@
       url "https://github.com/Delnegend/segotep-digital/releases/download/v0.1.0/segotep-digital-v0.1.0-linux-arm64.tar.xz"
       sha256 "11b03908393b7275ed1ab4cf2d0e33459b15a5772388b8e4500abd21e691c411"
     end
-  end
-
-  head do
-    depends_on "rust" => :build
   end
 
   def install
@@ -41,14 +34,30 @@
 
   def caveats
     <<~EOS
-      To allow non-root USB communication and enable the background service:
+      Runs entirely in userspace — no root privileges, udev rules, or system
+      service required. USB HID and telemetry are accessed directly.
 
-        sudo cp #{opt_pkgshare}/99-segotep.rules /etc/udev/rules.d/
-        sudo udevadm control --reload-rules && sudo udevadm trigger
+      Run in the foreground (Ctrl+C to stop):
 
-        sudo cp #{opt_pkgshare}/segotep-digital.service /etc/systemd/system/
-        sudo systemctl daemon-reload
-        sudo systemctl enable --now segotep-digital.service
+        segotep-digital -v
+
+      Or as a background daemon via systemd --user:
+
+        mkdir -p ~/.config/systemd/user
+        cat > ~/.config/systemd/user/segotep-digital.service <<UNIT
+        [Unit]
+        Description=Segotep Digital AIO display service
+
+        [Service]
+        Type=simple
+        ExecStart=#{HOMEBREW_PREFIX}/bin/segotep-digital
+        Restart=on-failure
+
+        [Install]
+        WantedBy=default.target
+        UNIT
+        systemctl --user daemon-reload
+        systemctl --user enable --now segotep-digital.service
     EOS
   end
 
