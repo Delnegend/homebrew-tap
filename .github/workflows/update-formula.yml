@@ -84,6 +84,12 @@ jobs:
           if [ -n "$updated" ]; then
             echo "updated=true" >> "$GITHUB_OUTPUT"
             printf "%b" "$updated" > /tmp/updated.txt
+            {
+              echo "Release updates detected:"
+              echo '```'
+              cat /tmp/updated.txt
+              echo '```'
+            } > /tmp/pr_body.txt
           fi
 
       - name: Create PR
@@ -93,10 +99,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'chore(deps): update formulas to latest releases'
           title: 'chore(deps): update formulas to latest releases'
-          body: |
-            Release updates detected:
-            ```
-            $(cat /tmp/updated.txt)
-            ```
+          body-path: /tmp/pr_body.txt
           branch: chore/update-formulas
           delete-branch: true
