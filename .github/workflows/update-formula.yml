@@ -82,7 +82,7 @@ jobs:
             fi
             name=$(basename "$formula" .rb)
             updated="${updated}${formula}: v${current} -> v${latest}\n"
-            table_rows="${table_rows}| 📦 \`${name}\` | \`${current}\` | \`${latest}\` ✨ |\n"
+            table_rows="${table_rows}| \`${name}\` | \`${current}\` | \`${latest}\` |\n"
           done
           if [ -n "$updated" ]; then
             echo "updated=true" >> "$GITHUB_OUTPUT"
