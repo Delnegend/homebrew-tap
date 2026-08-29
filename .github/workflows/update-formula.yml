@@ -23,17 +23,62 @@ jobs:
         run: |
           updated=""
           for formula in Formula/*.rb; do
-            repo=$(grep -oP 'homepage "https://github.com/\K[^"/]+/[^"/]+' "$formula")
-            latest=$(git -c credential.helper= ls-remote --tags "https://github.com/${repo}.git" | awk -F'/' '{print $NF}' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/^v//')
-            current=$(grep -oP 'tags/v\K[0-9.]+' "$formula")
+            repo=$(grep -oP 'homepage "https://github.com/\K[^"/]+/[^"/]+' "$formula" || true)
+            if [ -z "$repo" ]; then
+              echo "::warning::$formula: could not parse repo"
+              continue
+            fi
+            latest=$(git -c credential.helper= ls-remote --tags "https://github.com/${repo}.git" 2>/dev/null | awk -F'/' '{print $NF}' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/^v//')
+            if [ -z "$latest" ]; then
+              echo "::warning::$formula: could not determine latest for $repo"
+              continue
+            fi
+            # robust current version extraction: prefer version "..." then tags/v then releases/download
+            current=$(grep -oP 'version "\K[0-9]+\.[0-9]+\.[0-9]+' "$formula" | head -1 || true)
+            if [ -z "$current" ]; then
+              current=$(grep -oP 'tags/v\K[0-9]+\.[0-9]+\.[0-9]+' "$formula" | head -1 || true)
+            fi
+            if [ -z "$current" ]; then
+              current=$(grep -oP 'releases/download/v\K[0-9]+\.[0-9]+\.[0-9]+' "$formula" | head -1 || true)
+            fi
+            if [ -z "$current" ]; then
+              echo "::warning::$formula: could not determine current version"
+              continue
+            fi
             echo "::notice::$formula: current=$current latest=$latest"
             if [ "$latest" = "$current" ]; then
               continue
             fi
-            curl -fsSL "https://codeload.github.com/${repo}/tar.gz/refs/tags/v${latest}" -o /tmp/tarball
-            sha=$(sha256sum /tmp/tarball | cut -d' ' -f1)
-            sed -i "s|\(tags/v\)[0-9.]*\(\.tar\.gz\)|\1${latest}\2|" "$formula"
-            sed -i "s|\(sha256 \"\)[a-f0-9]*\(\"\)|\1${sha}\2|" "$formula"
+            # update version field and URLs containing the version
+            sed -i -E "s/version \"[0-9]+\.[0-9]+\.[0-9]+\"/version \"${latest}\"/g" "$formula"
+            sed -i "s|tags/v${current}|tags/v${latest}|g" "$formula"
+            sed -i "s|releases/download/v${current}|releases/download/v${latest}|g" "$formula"
+            sed -i "s|-v${current}|-v${latest}|g" "$formula"
+
+            # update sha256 for each versioned URL (skip livecheck url)
+            urls=$(grep -oP 'url "\K[^"]+' "$formula" | grep -E "v${latest}" || true)
+            if [ -z "$urls" ]; then
+              echo "::warning::$formula: no versioned urls found after patch"
+            else
+              tmp=$(mktemp)
+              cp "$formula" "$tmp.base"
+              idx=0
+              while IFS= read -r url; do
+                [ -z "$url" ] && continue
+                idx=$((idx+1))
+                echo "Fetching $url ..."
+                if ! curl -fsSL "$url" -o /tmp/tarball; then
+                  echo "::warning::Failed to fetch $url"
+                  continue
+                fi
+                sha=$(sha256sum /tmp/tarball | cut -d' ' -f1)
+                echo "  sha256 $sha"
+                awk -v n="$idx" -v sha="$sha" 'BEGIN{c=0} /sha256 "/{c++; if(c==n) sub(/sha256 "[a-f0-9]*"/, "sha256 \"" sha "\"")} {print}' "$tmp.base" > "$tmp.new" && mv "$tmp.new" "$tmp.base"
+                rm -f /tmp/tarball
+              done <<< "$urls"
+              cp "$tmp.base" "$formula"
+              rm -f "$tmp.base" "$tmp.new"
+            fi
             updated="${updated}${formula}: v${current} -> v${latest}\n"
           done
           if [ -n "$updated" ]; then
