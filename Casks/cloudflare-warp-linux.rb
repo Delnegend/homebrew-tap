@@ -2,8 +2,8 @@ cask "cloudflare-warp-linux" do
   arch arm: "arm64", intel: "amd64"
 
   version "2026.7.1377.0"
-  sha256 arm:   "5593a0d2cf827414a5d7b48c70dba42d4e2f130083b910280eab1932281d0ec6",
-         intel: "a73429701c47ee9dc3c8307a0ead67054530787239bd71a12e7f93acdbe96f65"
+  sha256 arm64_linux:  "5593a0d2cf827414a5d7b48c70dba42d4e2f130083b910280eab1932281d0ec6",
+         x86_64_linux: "a73429701c47ee9dc3c8307a0ead67054530787239bd71a12e7f93acdbe96f65"
 
   url "https://pkg.cloudflareclient.com/pool/noble/main/c/cloudflare-warp/cloudflare-warp_#{version}_#{arch}.deb"
   name "Cloudflare WARP"
