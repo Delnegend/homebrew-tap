@@ -45,7 +45,7 @@ cask "cloudflare-warp-linux" do
           ln -sf "../usr/lib/warp/warp-taskbar" "bin/warp-taskbar"
         fi
         if [ -f "lib/systemd/system/warp-svc.service" ]; then
-          sed -i "s|ExecStart=/bin/warp-svc|ExecStart={{HOMEBREW_PREFIX}}/bin/warp-svc|" lib/systemd/system/warp-svc.service
+          sed -i "s|ExecStart=/bin/warp-svc|ExecStart=/usr/local/bin/warp-svc|" lib/systemd/system/warp-svc.service
         fi
         if [ -f "usr/lib/systemd/user/warp-taskbar.service" ]; then
           sed -i "s|ExecStart=/bin/warp-taskbar|ExecStart={{HOMEBREW_PREFIX}}/bin/warp-taskbar|" usr/lib/systemd/user/warp-taskbar.service
@@ -69,7 +69,8 @@ cask "cloudflare-warp-linux" do
     To run warp-svc manually:
       sudo warp-svc
 
-    To enable and start warp-svc via systemd, copy or symlink the service file:
+    To run warp-svc via systemd (avoids SELinux home directory restrictions on Fedora/Bazzite):
+      sudo cp #{HOMEBREW_PREFIX}/bin/warp-svc /usr/local/bin/warp-svc
       sudo cp #{staged_path}/lib/systemd/system/warp-svc.service /etc/systemd/system/
       sudo systemctl daemon-reload
       sudo systemctl enable --now warp-svc
