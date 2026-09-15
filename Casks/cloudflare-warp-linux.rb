@@ -44,6 +44,12 @@ cask "cloudflare-warp-linux" do
         if [ -f "usr/lib/warp/warp-taskbar" ]; then
           ln -sf "../usr/lib/warp/warp-taskbar" "bin/warp-taskbar"
         fi
+        if [ -f "lib/systemd/system/warp-svc.service" ]; then
+          sed -i "s|ExecStart=/bin/warp-svc|ExecStart={{HOMEBREW_PREFIX}}/bin/warp-svc|" lib/systemd/system/warp-svc.service
+        fi
+        if [ -f "usr/lib/systemd/user/warp-taskbar.service" ]; then
+          sed -i "s|ExecStart=/bin/warp-taskbar|ExecStart={{HOMEBREW_PREFIX}}/bin/warp-taskbar|" usr/lib/systemd/user/warp-taskbar.service
+        fi
       SH
     ]
   end
