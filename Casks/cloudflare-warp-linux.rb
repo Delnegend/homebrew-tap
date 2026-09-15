@@ -19,16 +19,18 @@ cask "cloudflare-warp-linux" do
   depends_on :linux
   container type: :naked
 
-  binary "usr/bin/warp-cli"
-  binary "usr/bin/warp-dex"
-  binary "usr/bin/warp-diag"
-  binary "usr/bin/warp-svc"
+  binary "bin/warp-cli"
+  binary "bin/warp-dex"
+  binary "bin/warp-diag"
+  binary "bin/warp-svc"
+  binary "bin/warp-taskbar"
 
   preflight_steps do
     run "/bin/sh", args: [
       "-c",
       <<~SH,
         set -e
+        cd "{{staged_path}}"
         deb=$(find . -maxdepth 1 -name "*.deb" -print -quit)
         [ -n "$deb" ] || exit 1
         if command -v dpkg-deb >/dev/null 2>&1; then
@@ -37,27 +39,14 @@ cask "cloudflare-warp-linux" do
           ar x "$deb"
           data_tar=$(find . -maxdepth 1 -name "data.tar.*" -print -quit)
           tar -xf "$data_tar"
+          rm -f "$deb" "$data_tar" control.tar.* debian-binary
         fi
-        for b in warp-cli warp-dex warp-diag warp-svc; do
-          if [ -f "bin/$b" ] && [ ! -f "usr/bin/$b" ]; then
-            mkdir -p usr/bin
-            cp "bin/$b" "usr/bin/$b"
-          fi
-        done
+        if [ -f "usr/lib/warp/warp-taskbar" ]; then
+          ln -sf "../usr/lib/warp/warp-taskbar" "bin/warp-taskbar"
+        fi
       SH
     ]
   end
-
-  uninstall quit:   [
-              "com.cloudflare.Warp",
-              "warp-svc",
-            ],
-            delete: [
-              "#{HOMEBREW_PREFIX}/bin/warp-cli",
-              "#{HOMEBREW_PREFIX}/bin/warp-dex",
-              "#{HOMEBREW_PREFIX}/bin/warp-diag",
-              "#{HOMEBREW_PREFIX}/bin/warp-svc",
-            ]
 
   zap trash: [
     "/etc/cloudflare-warp",
