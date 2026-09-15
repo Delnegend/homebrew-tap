@@ -68,6 +68,20 @@ cask "cloudflare-warp-linux" do
     ]
   end
 
+  uninstall_preflight_steps do
+    run "/bin/sh", args: [
+      "-c",
+      <<~SH,
+        systemctl --user disable --now warp-taskbar.service 2>/dev/null || true
+        rm -f "$HOME/.config/systemd/user/warp-taskbar.service"
+        rm -f "$HOME/.local/share/applications/com.cloudflare.WarpTaskbar.desktop"
+        rm -f "$HOME/.local/share/applications/com.cloudflare.warp.desktop"
+        rm -f "$HOME/.local/share/icons/hicolor/scalable/apps/zero-trust-orange.svg"
+        systemctl --user daemon-reload 2>/dev/null || true
+      SH
+    ]
+  end
+
   zap trash: [
     "/etc/cloudflare-warp",
     "/var/lib/cloudflare-warp",
@@ -80,12 +94,19 @@ cask "cloudflare-warp-linux" do
   caveats <<~EOS
     Cloudflare WARP requires the background service (warp-svc) to be running.
 
+    To run warp-svc manually:
+      sudo warp-svc
+
     To run warp-svc via systemd (recommended, avoids SELinux restrictions on Fedora/Bazzite):
       sudo cp #{HOMEBREW_PREFIX}/bin/warp-svc /usr/local/bin/warp-svc
       sudo cp #{staged_path}/lib/systemd/system/warp-svc.service /etc/systemd/system/
       sudo systemctl daemon-reload
       sudo systemctl enable --now warp-svc
 
+    Once running, register and connect using warp-cli:
+      warp-cli registration new
+      warp-cli connect
+      warp-cli status
     To use the GUI Taskbar / Tray icon:
       1. Ensure indicator support is installed:
            brew install libayatana-appindicator
@@ -101,5 +122,10 @@ cask "cloudflare-warp-linux" do
       warp-cli registration token <your-token>
       or
       warp-cli teams-enroll <your-team-name>
+
+    To stop and remove system services upon uninstall:
+      sudo systemctl disable --now warp-svc
+      sudo rm -f /etc/systemd/system/warp-svc.service /usr/local/bin/warp-svc
+      sudo systemctl daemon-reload
   EOS
 end
