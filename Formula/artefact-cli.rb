@@ -27,6 +27,6 @@ class ArtefactCli < Formula
   end
 
   test do
-    assert_match "artefact-cli", shell_output("#{bin}/artefact-cli --version")
+    assert_match "artefact-cli #{version}", shell_output("#{bin}/artefact-cli --version")
   end
 end
