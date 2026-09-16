@@ -19,6 +19,9 @@ class ArtefactCli < Formula
     # has to be unlocked on Homebrew's (stable) `rust`. Same approach as
     # Homebrew's own `rust-wasm` formula.
     ENV["RUSTC_BOOTSTRAP"] = "1"
+    # Report the formula version from `--version` (the release workflow does the
+    # same via `ARTEFACT_BUILD_VERSION`).
+    ENV["ARTEFACT_BUILD_VERSION"] = version
 
     system "cargo", "install", "--path", "backend/artefact-cli", *std_cargo_args
   end
