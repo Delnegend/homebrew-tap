@@ -7,6 +7,7 @@ Homebrew formulas for [Delnegend's](https://github.com/Delnegend) command-line t
 ```bash
 brew tap Delnegend/tap
 
+brew install artefact-cli
 brew install mikrotik-mcp
 brew install rsrpc
 brew install segotep-digital
@@ -15,6 +16,7 @@ brew install --cask cloudflare-warp-linux
 
 ## Formulas
 
+- **artefact-cli** — Remove JPEG compression artefacts ([repo](https://github.com/Delnegend/artefact)) — built from source
 - **mikrotik-mcp** — MCP server for managing MikroTik routers through the RouterOS API ([repo](https://github.com/Delnegend/mikrotik-mcp-server))
 - **rsrpc** — Alternative Discord RPC server ([repo](https://github.com/SpikeHD/rsRPC))
 - **segotep-digital** — Driver and background service for Segotep Ice Moon / Digital series AIO CPU coolers ([repo](https://github.com/Delnegend/segotep-digital))
