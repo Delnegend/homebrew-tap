@@ -1,9 +1,9 @@
 class ArtefactCli < Formula
   desc "Remove JPEG compression artefacts"
   homepage "https://github.com/Delnegend/artefact"
-  version "1.0.9"
-  url "https://github.com/Delnegend/artefact/archive/refs/tags/v1.0.9.tar.gz"
-  sha256 "18e4727f2ad6c078d4fbeb6878e340147db77c7a3fc3b4ba946503871c330dca"
+  version "1.0.10"
+  url "https://github.com/Delnegend/artefact/archive/refs/tags/v1.0.10.tar.gz"
+  sha256 "a7d9f85bee20f79327d6e85d09307e29a07b7f0b5e49531697cf8aa4c130033a"
   license any_of: ["Apache-2.0", "MIT"]
   head "https://github.com/Delnegend/artefact.git", branch: "main"
 
