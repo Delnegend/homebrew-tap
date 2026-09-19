@@ -24,14 +24,18 @@ jobs:
           updated=""
           table_rows=""
           for formula in Formula/*.rb; do
-            repo=$(grep -oP 'homepage "https://github.com/\K[^"/]+/[^"/]+' "$formula" || true)
-            if [ -z "$repo" ]; then
-              echo "::warning::$formula: could not parse repo"
+            git_url=$(grep -oP '(?:url "|head ")\Khttps://[^"]+\.git' "$formula" || true)
+            if [ -z "$git_url" ]; then
+              repo=$(grep -oP 'homepage "https://github.com/\K[^"/]+/[^"/]+' "$formula" || true)
+              [ -n "$repo" ] && git_url="https://github.com/${repo}.git"
+            fi
+            if [ -z "$git_url" ]; then
+              echo "::warning::$formula: could not determine git repository URL"
               continue
             fi
-            latest=$(git -c credential.helper= ls-remote --tags "https://github.com/${repo}.git" 2>/dev/null | awk -F'/' '{print $NF}' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/^v//')
+            latest=$(git -c credential.helper= ls-remote --tags "$git_url" 2>/dev/null | awk -F'/' '{print $NF}' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/^v//')
             if [ -z "$latest" ]; then
-              echo "::warning::$formula: could not determine latest for $repo"
+              echo "::warning::$formula: could not determine latest for $git_url"
               continue
             fi
             # robust current version extraction: prefer version "..." then tags/v then releases/download
@@ -55,9 +59,10 @@ jobs:
             sed -i "s|tags/v${current}|tags/v${latest}|g" "$formula"
             sed -i "s|releases/download/v${current}|releases/download/v${latest}|g" "$formula"
             sed -i "s|-v${current}|-v${latest}|g" "$formula"
+            sed -i "s|_${current}_|_${latest}_|g" "$formula"
 
             # update sha256 for each versioned URL (skip livecheck url)
-            urls=$(grep -oP 'url "\K[^"]+' "$formula" | grep -E "v${latest}" || true)
+            urls=$(grep -oP 'url "\K[^"]+' "$formula" | grep -E "v${latest}|_${latest}_" || true)
             if [ -z "$urls" ]; then
               echo "::warning::$formula: no versioned urls found after patch"
             else
