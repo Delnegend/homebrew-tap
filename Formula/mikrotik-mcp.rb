@@ -1,7 +1,7 @@
 class MikrotikMcp < Formula
   desc "MCP server for managing MikroTik routers through the RouterOS API"
   homepage "https://github.com/Delnegend/mikrotik-mcp-server"
-  version "0.3.1"
+  version "0.3.2"
   license "MIT"
   head "https://github.com/Delnegend/mikrotik-mcp-server.git", branch: "master"
 
@@ -12,24 +12,24 @@ class MikrotikMcp < Formula
 
   on_macos do
     on_arm do
-      url "https://github.com/Delnegend/mikrotik-mcp-server/releases/download/v0.3.1/mikrotik-mcp-darwin-arm64.tar.xz"
-      sha256 "cd21e5057729eec5fb2fdbd5e68f267ec4a7cfeb227ebf45d2bf4951e3ebdf4c"
+      url "https://github.com/Delnegend/mikrotik-mcp-server/releases/download/v0.3.2/mikrotik-mcp-darwin-arm64.tar.xz"
+      sha256 "1c21e42ef885afa4e15607f48824dd89afed552406196145f75a206339ab13ac"
     end
     on_intel do
-      url "https://github.com/Delnegend/mikrotik-mcp-server/archive/refs/tags/v0.3.1.tar.gz"
-      sha256 "f0943e08324d1c87abedaaa66f07f6483730b7dd65dfabd6046aab74a4044264"
+      url "https://github.com/Delnegend/mikrotik-mcp-server/archive/refs/tags/v0.3.2.tar.gz"
+      sha256 "b0a87253cf3fbf20c946a3af2a2df2fdc50105e87c3543f6023d1f36b95714eb"
       depends_on "go" => :build
     end
   end
 
   on_linux do
     on_arm do
-      url "https://github.com/Delnegend/mikrotik-mcp-server/releases/download/v0.3.1/mikrotik-mcp-linux-arm64.tar.xz"
+      url "https://github.com/Delnegend/mikrotik-mcp-server/releases/download/v0.3.2/mikrotik-mcp-linux-arm64.tar.xz"
       sha256 "946bf40ddf6335728ded1109f2526a70bd3f6e042ce911f354918a619cab482a"
     end
     on_intel do
-      url "https://github.com/Delnegend/mikrotik-mcp-server/releases/download/v0.3.1/mikrotik-mcp-linux-amd64.tar.xz"
-      sha256 "4582ed0ae9a2639bb17a484b9fd43c40b5ffdbad2d7a8be6657be5336307fc39"
+      url "https://github.com/Delnegend/mikrotik-mcp-server/releases/download/v0.3.2/mikrotik-mcp-linux-amd64.tar.xz"
+      sha256 "afcb2fe07fbe7975d0a87b1e0158e423fe1e8638b7ac59939fea0c7d79d5070d"
     end
   end
 
