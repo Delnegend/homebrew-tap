@@ -23,19 +23,10 @@ jobs:
           updated=""
           table_rows=""
           for formula in Formula/*.rb; do
-            git_url=$(grep -oP '(?:url "|head ")\Khttps://[^"]+\.git' "$formula" || true)
-            if [ -z "$git_url" ]; then
-              repo=$(grep -oP 'homepage "https://github.com/\K[^"/]+/[^"/]+' "$formula" || true)
-              [ -n "$repo" ] && git_url="https://github.com/${repo}.git"
-            fi
-            if [ -z "$git_url" ]; then
-              echo "::warning::$formula: could not determine git repository URL"
-              continue
-            fi
-            latest=$(git -c credential.helper= ls-remote --tags "$git_url" 2>/dev/null | awk -F'/' '{print $NF}' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/^v//')
-            if [ -z "$latest" ]; then
-              echo "::warning::$formula: could not determine latest for $git_url"
-              continue
+            download_url=$(grep -oP '^\s*url "\K[^"]+' "$formula" | head -1 || true)
+            repo=$(grep -oP 'homepage "https://github.com/\K[^"/]+/[^"/]+' "$formula" | head -1 || true)
+            if [ -z "$repo" ]; then
+              repo=$(printf '%s' "$download_url" | grep -oP 'https://github\.com/\K[^/]+/[^/]+' | head -1 || true)
             fi
             # robust current version extraction: prefer version "..." then tags/v then releases/download
             current=$(grep -oP 'version "\K[0-9]+\.[0-9]+\.[0-9]+' "$formula" | head -1 || true)
@@ -49,16 +40,34 @@ jobs:
               echo "::warning::$formula: could not determine current version"
               continue
             fi
+            latest=""
+            asset=$(basename "${download_url:-}")
+            if [ -n "$repo" ] && [[ "$download_url" == *"/releases/download/"* ]] && [[ "$asset" == *"$current"* ]]; then
+              # Release-asset download: the newest tag can be a build (a Brave
+              # nightly, say) that never ships this asset, so pick the newest
+              # release that actually has one.
+              latest=$(python3 .github/scripts/latest-release-asset.py "$repo" "$asset" "$current") || latest=""
+              if [ -z "$latest" ]; then
+                echo "::warning::$formula: no release asset matching $asset"
+              fi
+            elif [ -n "$repo" ]; then
+              latest=$(git -c credential.helper= ls-remote --tags "https://github.com/${repo}.git" 2>/dev/null | awk -F'/' '{print $NF}' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1 | sed 's/^v//')
+              if [ -z "$latest" ]; then
+                echo "::warning::$formula: could not determine latest for $repo"
+              fi
+            else
+              echo "::warning::$formula: could not determine git repository URL"
+            fi
+            if [ -z "$latest" ]; then
+              continue
+            fi
             echo "::notice::$formula: current=$current latest=$latest"
             if [ "$latest" = "$current" ]; then
               continue
             fi
-            # update version field and URLs containing the version
+            # update version field and every version carried by a url or head line
             sed -i -E "s/version \"[0-9]+\.[0-9]+\.[0-9]+\"/version \"${latest}\"/g" "$formula"
-            sed -i "s|tags/v${current}|tags/v${latest}|g" "$formula"
-            sed -i "s|releases/download/v${current}|releases/download/v${latest}|g" "$formula"
-            sed -i "s|-v${current}|-v${latest}|g" "$formula"
-            sed -i "s|_${current}_|_${latest}_|g" "$formula"
+            sed -i -E "/^[[:space:]]*(url|head) \"/ s/${current//./\\.}/${latest}/g" "$formula"
 
             # update sha256 for each versioned URL (skip livecheck url)
             urls=$(grep -oP 'url "\K[^"]+' "$formula" | grep -E "v${latest}|_${latest}_" || true)
