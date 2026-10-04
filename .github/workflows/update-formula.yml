@@ -15,16 +15,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
       - name: Check for release updates
         id: releases
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: bun run .github/scripts/update-formula.ts
+        run: python3 .github/scripts/update_formula.py
 
       - name: Commit and push
         if: steps.releases.outputs.updated == 'true'
