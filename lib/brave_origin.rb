@@ -25,6 +25,19 @@ class BraveOriginFormula < Formula
         BraveOriginFormula.channel_versions(releases, name)
       end
     end
+    # Homebrew publishes the desktop entry and icon into the prefix's share
+    # directory but does not tell the caches desktop environments read about
+    # them, so the menu entry shows up with a blank icon. These have to be
+    # declared per formula: `post_install_steps` marks the class it is called
+    # on, and a subclass does not inherit the flag.
+    post_install_steps do
+      # Homebrew's own `update_gtk_icon_cache` and `update_desktop_database`
+      # steps need the `gtk+3` and `desktop-file-utils` formulae installed and
+      # fail without them, so run whichever tools PATH offers. A missing one is
+      # not worth failing an install over.
+      run "gtk-update-icon-cache", args: ["-qtf", HOMEBREW_PREFIX/"share/icons/hicolor"], must_succeed: false
+      run "update-desktop-database", args: [HOMEBREW_PREFIX/"share/applications"], must_succeed: false
+    end
   end
 
   # Highest version that actually ships this channel's Linux archive. Versions
@@ -45,7 +58,7 @@ class BraveOriginFormula < Formula
   # Upstream names the 256px brand logo `product_logo_256.png` for the stable
   # channel and appends the channel with an underscore for the others, e.g.
   # `product_logo_256_beta.png`.
-  def logo_file = "product_logo_256#{channel.delete_prefix('brave-origin').tr('-', '_')}.png"
+  def logo_file = "product_logo_256#{channel.delete_prefix("brave-origin").tr("-", "_")}.png"
 
   def install
     # Desktop entry and icon. Homebrew sandboxes installs to the keg, so these
