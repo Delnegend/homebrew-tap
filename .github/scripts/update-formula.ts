@@ -8,27 +8,21 @@
 // that asset. Anything else falls back to the newest `vX.Y.Z` git tag. The
 // highest version wins either way: projects back-publish patch releases, so a
 // release published yesterday can carry a lower version than today's.
+//
+// Formulae are checked concurrently, capped at CONCURRENCY: a bump run
+// downloads several hundred megabytes of archives to hash, and doing that one
+// formula at a time is most of the runtime. The cap keeps the GitHub API from
+// seeing a burst and keeps parallel archive downloads from saturating memory.
+// Results are sorted before printing so the log and the commit summary stay
+// identical to a sequential run.
 
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const FORMULA_DIR = "Formula";
 const RELEASE_PAGES = 5;
 const RELEASES_PER_PAGE = 100;
+const CONCURRENCY = 4;
 const SUMMARY_FILE = "/tmp/updated.txt";
-
-const warnings: string[] = [];
-const notices: string[] = [];
-const summary: string[] = [];
-
-function warn(message: string): void {
-  warnings.push(message);
-  console.log(`::warning::${message}`);
-}
-
-function notice(message: string): void {
-  notices.push(message);
-  console.log(`::notice::${message}`);
-}
 
 const VERSIONED_URL = (version: string) => new RegExp(`v${version}|_${version}_`);
 const GITHUB_SLUG = /https:\/\/github\.com\/([^/"]+\/[^/"]+)/;
@@ -116,82 +110,113 @@ async function sha256(url: string): Promise<string | null> {
   }
 }
 
+interface Result {
+  path: string;
+  notices: string[];
+  warnings: string[];
+  summary: string | null;
+}
+
 // Refetches every versioned url and rewrites the sha256 on the following line.
-async function refreshChecksums(source: string, latest: string): Promise<string> {
+// A formula can carry several (one per architecture), so these run together.
+async function refreshChecksums(
+  source: string,
+  latest: string,
+  warnings: string[],
+): Promise<string> {
   const lines = source.split("\n");
   const versioned = VERSIONED_URL(latest);
 
-  for (let i = 0; i < lines.length; i += 1) {
-    const url = firstMatch(lines[i], /^\s*url "([^"]+)"/);
-    if (url === null || !versioned.test(url)) continue;
+  const targets = lines.flatMap((line, index) => {
+    const url = firstMatch(line, /^\s*url "([^"]+)"/);
+    if (url === null || !versioned.test(url)) return [];
 
-    const offset = lines.slice(i + 1).findIndex((line) => /sha256 "/.test(line));
+    const offset = lines.slice(index + 1).findIndex((entry) => /sha256 "/.test(entry));
     if (offset === -1) {
-      warn(`no sha256 line follows ${url}`);
-      continue;
+      warnings.push(`no sha256 line follows ${url}`);
+      return [];
     }
+    return [{ url, shaIndex: index + 1 + offset }];
+  });
 
-    console.log(`Fetching ${url} ...`);
-    const sha = await sha256(url);
-    if (sha === null) {
-      warn(`Failed to fetch ${url}`);
-      continue;
-    }
-    console.log(`  sha256 ${sha}`);
+  const checksums = await Promise.all(
+    targets.map(async ({ url, shaIndex }) => {
+      console.log(`Fetching ${url} ...`);
+      const sha = await sha256(url);
+      if (sha === null) {
+        warnings.push(`Failed to fetch ${url}`);
+        return null;
+      }
+      console.log(`  sha256 ${sha}`);
+      return { shaIndex, sha };
+    }),
+  );
 
-    const shaIndex = i + 1 + offset;
-    lines[shaIndex] = lines[shaIndex].replace(/sha256 "[a-f0-9]*"/, `sha256 "${sha}"`);
+  for (const check of checksums) {
+    if (check === null) continue;
+    lines[check.shaIndex] = lines[check.shaIndex].replace(
+      /sha256 "[a-f0-9]*"/,
+      `sha256 "${check.sha}"`,
+    );
   }
   return lines.join("\n");
 }
 
-async function updateFormula(path: string): Promise<void> {
+// Never throws: a formula that cannot be checked is reported, not fatal.
+async function updateFormula(path: string): Promise<Result> {
+  const notices: string[] = [];
+  const warnings: string[] = [];
   const original = readFileSync(path, "utf8");
 
-  const downloadUrl = firstMatch(original, /^\s*url "([^"]+)"/m);
-  const homepage = firstMatch(original, /homepage "([^"]+)"/);
-  const repo =
-    GITHUB_SLUG.exec(homepage ?? "")?.[1] ??
-    GITHUB_SLUG.exec(downloadUrl ?? "")?.[1] ??
-    null;
+  try {
+    const downloadUrl = firstMatch(original, /^\s*url "([^"]+)"/m);
+    const homepage = firstMatch(original, /homepage "([^"]+)"/);
+    const repo =
+      GITHUB_SLUG.exec(homepage ?? "")?.[1] ??
+      GITHUB_SLUG.exec(downloadUrl ?? "")?.[1] ??
+      null;
 
-  const current =
-    firstMatch(original, /version "(\d+\.\d+\.\d+)"/) ??
-    firstMatch(original, /tags\/v(\d+\.\d+\.\d+)/) ??
-    firstMatch(original, /releases\/download\/v(\d+\.\d+\.\d+)/);
-  if (current === null) {
-    warn(`${path}: could not determine current version`);
-    return;
+    const current =
+      firstMatch(original, /version "(\d+\.\d+\.\d+)"/) ??
+      firstMatch(original, /tags\/v(\d+\.\d+\.\d+)/) ??
+      firstMatch(original, /releases\/download\/v(\d+\.\d+\.\d+)/);
+    if (current === null) {
+      warnings.push(`${path}: could not determine current version`);
+      return { path, notices, warnings, summary: null };
+    }
+
+    let latest: string | null = null;
+    const asset = downloadUrl === null ? "" : downloadUrl.split("/").pop() ?? "";
+    if (repo !== null && downloadUrl?.includes("/releases/download/") && asset.includes(current)) {
+      latest = await newestAssetVersion(repo, asset, current);
+      if (latest === null) warnings.push(`${path}: no release asset matching ${asset}`);
+    } else if (repo !== null) {
+      latest = await newestTag(repo);
+      if (latest === null) warnings.push(`${path}: could not determine latest for ${repo}`);
+    } else {
+      warnings.push(`${path}: could not determine git repository URL`);
+    }
+    if (latest === null) return { path, notices, warnings, summary: null };
+
+    notices.push(`${path}: current=${current} latest=${latest}`);
+    if (latest === current) return { path, notices, warnings, summary: null };
+
+    let updated = original.replace(/version "\d+\.\d+\.\d+"/g, `version "${latest}"`);
+    const carried = new RegExp(escapeForRegExp(current), "g");
+    updated = updated
+      .split("\n")
+      .map((line) => (/^\s*(url|head) "/.test(line) ? line.replace(carried, latest) : line))
+      .join("\n");
+
+    updated = await refreshChecksums(updated, latest, warnings);
+
+    if (updated === original) return { path, notices, warnings, summary: null };
+    writeFileSync(path, updated);
+    return { path, notices, warnings, summary: `${path}: v${current} -> v${latest}` };
+  } catch (error) {
+    warnings.push(`${path}: ${(error as Error).message}`);
+    return { path, notices, warnings, summary: null };
   }
-
-  let latest: string | null = null;
-  const asset = downloadUrl === null ? "" : downloadUrl.split("/").pop() ?? "";
-  if (repo !== null && downloadUrl?.includes("/releases/download/") && asset.includes(current)) {
-    latest = await newestAssetVersion(repo, asset, current);
-    if (latest === null) warn(`${path}: no release asset matching ${asset}`);
-  } else if (repo !== null) {
-    latest = await newestTag(repo);
-    if (latest === null) warn(`${path}: could not determine latest for ${repo}`);
-  } else {
-    warn(`${path}: could not determine git repository URL`);
-  }
-  if (latest === null) return;
-
-  notice(`${path}: current=${current} latest=${latest}`);
-  if (latest === current) return;
-
-  let updated = original.replace(/version "\d+\.\d+\.\d+"/g, `version "${latest}"`);
-  const carried = new RegExp(escapeForRegExp(current), "g");
-  updated = updated
-    .split("\n")
-    .map((line) => (/^\s*(url|head) "/.test(line) ? line.replace(carried, latest) : line))
-    .join("\n");
-
-  updated = await refreshChecksums(updated, latest);
-
-  if (updated === original) return;
-  writeFileSync(path, updated);
-  summary.push(`${path}: v${current} -> v${latest}`);
 }
 
 async function main(): Promise<void> {
@@ -199,23 +224,38 @@ async function main(): Promise<void> {
     .filter((name) => name.endsWith(".rb"))
     .sort()
     .map((name) => `${FORMULA_DIR}/${name}`);
+  const results: Result[] = [];
+  let next = 0;
+  await Promise.all(
+    Array.from({ length: Math.min(CONCURRENCY, formulas.length) }, async () => {
+      // Claim the index before awaiting: reading it after the await lets two
+      // workers pick up the same formula.
+      while (next < formulas.length) {
+        const index = next;
+        next += 1;
+        results.push(await updateFormula(formulas[index]));
+      }
+    }),
+  );
+  results.sort((a, b) => a.path.localeCompare(b.path));
 
-  for (const formula of formulas) {
-    try {
-      await updateFormula(formula);
-    } catch (error) {
-      warn(`${formula}: ${(error as Error).message}`);
-    }
+  for (const result of results) {
+    for (const message of result.notices) console.log(`::notice::${message}`);
+    for (const message of result.warnings) console.log(`::warning::${message}`);
   }
 
-  console.log(`checked ${formulas.length} formulas, ${notices.length} notices, ${warnings.length} warnings`);
-  if (summary.length === 0) return;
+  const noticeCount = results.flatMap((result) => result.notices).length;
+  const warningCount = results.flatMap((result) => result.warnings).length;
+  console.log(`checked ${formulas.length} formulas, ${noticeCount} notices, ${warningCount} warnings`);
+
+  const changed = results.flatMap((result) => (result.summary === null ? [] : [result.summary]));
+  if (changed.length === 0) return;
 
   if (Bun.env.GITHUB_OUTPUT !== undefined) {
     await Bun.write(Bun.env.GITHUB_OUTPUT, "updated=true\n");
   }
-  await Bun.write(SUMMARY_FILE, `${summary.join("\n")}\n`);
-  console.log(summary.join("\n"));
+  await Bun.write(SUMMARY_FILE, `${changed.join("\n")}\n`);
+  console.log(changed.join("\n"));
 }
 
 await main();
