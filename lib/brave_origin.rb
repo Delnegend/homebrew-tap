@@ -40,10 +40,11 @@ class BraveOriginFormula < Formula
     end
   end
 
-  # Highest version that actually ships this channel's Linux archive. Versions
-  # are compared numerically; a plain string sort puts 1.9.10 below 1.99.9.
+  # Highest version that actually ships this channel's Linux archive for any
+  # architecture. Versions are compared numerically; a plain string sort puts
+  # 1.9.10 below 1.99.9.
   def self.channel_versions(releases, name)
-    pattern = /\A#{Regexp.escape(name)}-(\d+\.\d+\.\d+)-linux-amd64\.zip\z/
+    pattern = /\A#{Regexp.escape(name)}-(\d+\.\d+\.\d+)-linux-[a-z0-9_]+\.zip\z/
     versions = releases.flat_map do |release|
       release["assets"].to_a.filter_map { |asset| asset["name"][pattern, 1] }
     end
