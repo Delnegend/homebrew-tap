@@ -9,6 +9,8 @@ brew tap Delnegend/tap
 
 brew install artefact-cli
 brew install brave-origin
+brew install brave-origin-beta
+brew install brave-origin-nightly
 brew install forgejo-mcp
 brew install mikrotik-mcp
 brew install rsrpc
@@ -19,6 +21,8 @@ brew install segotep-digital
 
 - **artefact-cli** — Remove JPEG compression artefacts ([repo](https://github.com/Delnegend/artefact)) — built from source
 - **brave-origin** — Brave browser with every feature enabled, from the upstream Linux release zip ([upstream](https://github.com/brave/brave-browser))
+- **brave-origin-beta** — Brave Origin beta channel, same browser on the pre-release track ([upstream](https://github.com/brave/brave-browser))
+- **brave-origin-nightly** — Brave Origin nightly channel, same browser built daily ([upstream](https://github.com/brave/brave-browser))
 - **forgejo-mcp** — MCP server for Forgejo ([repo](https://git.b4mad.industries/agentic-forges/forgejo-mcp))
 - **mikrotik-mcp** — MCP server for managing MikroTik routers through the RouterOS API ([repo](https://github.com/Delnegend/mikrotik-mcp-server))
 - **rsrpc** — Alternative Discord RPC server ([repo](https://github.com/SpikeHD/rsRPC))
