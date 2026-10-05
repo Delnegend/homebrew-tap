@@ -15,6 +15,7 @@ brew install forgejo-mcp
 brew install mikrotik-mcp
 brew install rsrpc
 brew install segotep-digital
+brew install tsuzuri
 ```
 
 ## Formulas
@@ -27,6 +28,7 @@ brew install segotep-digital
 - **mikrotik-mcp** — MCP server for managing MikroTik routers through the RouterOS API ([repo](https://github.com/Delnegend/mikrotik-mcp-server))
 - **rsrpc** — Alternative Discord RPC server ([repo](https://github.com/SpikeHD/rsRPC))
 - **segotep-digital** — Driver and background service for Segotep Ice Moon / Digital series AIO CPU coolers ([repo](https://github.com/Delnegend/segotep-digital))
+- **tsuzuri** — Block-based notebook for the terminal ([upstream](https://github.com/jaisuriya-11/tsuzuri))
 
 ## Updates
 
