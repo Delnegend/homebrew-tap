@@ -1,8 +1,8 @@
 class Tsuzuri < Formula
   desc "Block-based notebook for the terminal"
   homepage "https://github.com/jaisuriya-11/tsuzuri"
-  url "https://github.com/jaisuriya-11/tsuzuri/releases/download/v0.2.0/tsuzuri-linux.tar.gz"
-  sha256 "619069055015f2005f72c8ca02a334c607ccac795259352eb19527f38e9fb89d"
+  url "https://github.com/jaisuriya-11/tsuzuri/releases/download/v0.2.1/tsuzuri-linux.tar.gz"
+  sha256 "0dfd1f7a492b26f2769385c96bc29908838c5e6ebf8d06bcb162f67522bde94f"
   license "MIT"
 
   livecheck do
