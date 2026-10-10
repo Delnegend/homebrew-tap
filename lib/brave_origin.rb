@@ -72,6 +72,10 @@ class BraveOriginFormula < Formula
 
     desktop = prefix/"share/applications/#{channel}.desktop"
     desktop.dirname.mkpath
+    # Every channel's window reports the same identity -- Brave compiles the
+    # Origin builds with the class name `brave-origin` -- so the entry has to
+    # claim that name, not the channel's display name, or GNOME cannot match
+    # the window to it and draws a generic icon in the overview.
     desktop.write <<~DESKTOP
       [Desktop Entry]
       Type=Application
@@ -82,7 +86,7 @@ class BraveOriginFormula < Formula
       Icon=#{channel}
       Terminal=false
       StartupNotify=true
-      StartupWMClass=#{display_name}
+      StartupWMClass=brave-origin
       Categories=Network;WebBrowser;
       MimeType=text/html;text/xml;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;
     DESKTOP
