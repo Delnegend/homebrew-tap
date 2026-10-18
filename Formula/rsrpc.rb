@@ -1,7 +1,7 @@
 class Rsrpc < Formula
   desc "Discord Rich Presence server for Linux and macOS"
   homepage "https://github.com/Delnegend/rsRPC"
-  version "0.28.1"
+  version "0.29.0"
   license "MIT"
 
   livecheck do
@@ -11,26 +11,26 @@ class Rsrpc < Formula
 
   on_macos do
     on_arm do
-      url "https://github.com/Delnegend/rsRPC/releases/download/v0.28.1/rsrpc-aarch64-apple-darwin.zip"
-      sha256 "76c4a40d84e6261e70db8c4fff5a93df4e679df4f1628ba3204bb3d8be0bf6e9"
+      url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.0/rsrpc-0.29.0-aarch64-apple-darwin.zip"
+      sha256 "d60ac07eecd13f2f27d723d185c1ac7374c81c6d007afd1f74cc2693ea8ded47"
     end
     # No prebuilt macos-x86_64 artifact yet, so build from the release tag.
     on_intel do
-      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.28.1.tar.gz"
-      sha256 "5ae5e581adc04bfb30e8b0defdb3f013912b943b587daa6110c099fad74f62fd"
+      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.0.tar.gz"
+      sha256 "758ec9bff0b2e3d7527a78fa379a0d99d67c567362636e56eba68bc34bf5b155"
       depends_on "rust" => :build
     end
   end
 
   on_linux do
     on_intel do
-      url "https://github.com/Delnegend/rsRPC/releases/download/v0.28.1/rsrpc-x86_64-unknown-linux-gnu.zip"
-      sha256 "848d153b5a242fe5fea73ca44b2e3e131d8c456549f1a64d9982d5b027e3f97b"
+      url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.0/rsrpc-0.29.0-x86_64-unknown-linux-gnu.zip"
+      sha256 "eff184e9ecc7a5ac346060e4150e57085558725f770b8e0420734a405693d9f2"
     end
     # No prebuilt linux-arm64 artifact yet, so build from the release tag.
     on_arm do
-      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.28.1.tar.gz"
-      sha256 "5ae5e581adc04bfb30e8b0defdb3f013912b943b587daa6110c099fad74f62fd"
+      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.0.tar.gz"
+      sha256 "758ec9bff0b2e3d7527a78fa379a0d99d67c567362636e56eba68bc34bf5b155"
       depends_on "rust" => :build
     end
   end
