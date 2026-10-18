@@ -23,7 +23,7 @@ class ArtefactCli < Formula
     # same via `ARTEFACT_BUILD_VERSION`).
     ENV["ARTEFACT_BUILD_VERSION"] = version
 
-    system "cargo", "install", "--path", "backend/artefact-cli", *std_cargo_args
+    system "cargo", "install", *std_cargo_args(path: "backend/artefact-cli")
   end
 
   test do
