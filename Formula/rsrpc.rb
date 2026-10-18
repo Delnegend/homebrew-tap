@@ -1,7 +1,7 @@
 class Rsrpc < Formula
   desc "Discord Rich Presence server for Linux and macOS"
   homepage "https://github.com/Delnegend/rsRPC"
-  version "0.29.0"
+  version "0.29.1"
   license "MIT"
 
   livecheck do
@@ -11,26 +11,26 @@ class Rsrpc < Formula
 
   on_macos do
     on_arm do
-      url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.0/rsrpc-0.29.0-aarch64-apple-darwin.tar.xz"
-      sha256 "3248eea37b0ca47ff63bc8236d1bab4a03bf99f9a933b0764ffb5b443d24a369"
+      url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.1/rsrpc-0.29.1-aarch64-apple-darwin.tar.xz"
+      sha256 "ff92bf7d32647777b8a5836ed1e6ea72422ffee2ba7cf0b5c8863ac702b3b320"
     end
     # No prebuilt macos-x86_64 artifact yet, so build from the release tag.
     on_intel do
-      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.0.tar.gz"
-      sha256 "3fcbe202d83fda34015852b45ee5308686828cc229cfa1b4302bf711fe4811a4"
+      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.1.tar.gz"
+      sha256 "c6cd260dfe7d0c434fbbc5ccf7a258e726b9e22e716dfbc5650f02d24730ccec"
       depends_on "rust" => :build
     end
   end
 
   on_linux do
     on_intel do
-      url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.0/rsrpc-0.29.0-x86_64-unknown-linux-gnu.tar.xz"
-      sha256 "2243c3d008077757fc42cc2251612ceab0c1d0589b50748819bb8779a24a0bd9"
+      url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.1/rsrpc-0.29.1-x86_64-unknown-linux-gnu.tar.xz"
+      sha256 "837494fafa87454558950e32a14d0c0223b224c3a1686ed9093e0cf4f23fa399"
     end
     # No prebuilt linux-arm64 artifact yet, so build from the release tag.
     on_arm do
-      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.0.tar.gz"
-      sha256 "3fcbe202d83fda34015852b45ee5308686828cc229cfa1b4302bf711fe4811a4"
+      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.1.tar.gz"
+      sha256 "c6cd260dfe7d0c434fbbc5ccf7a258e726b9e22e716dfbc5650f02d24730ccec"
       depends_on "rust" => :build
     end
   end
