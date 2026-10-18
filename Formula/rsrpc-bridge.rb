@@ -1,9 +1,9 @@
 class RsrpcBridge < Formula
   desc "Wine/Proton IPC bridge connecting Windows games to the host rsRPC socket"
   homepage "https://github.com/Delnegend/rsRPC"
-  url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.2/rsrpc-bridge-0.29.2-i686-pc-windows-gnu.zip"
-  version "0.29.2"
-  sha256 "cf1d39cd8503ee28172688fb4edabc458fac06bca2199f89e7b3a06cc112ed3a"
+  url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.5/rsrpc-bridge-0.29.5-i686-pc-windows-gnu.zip"
+  version "0.29.5"
+  sha256 "975cc70d5cd98dceabc6f3c0abe1e8b35ad49f34c93c1ca8287e18a5a6af7e65"
   license "MIT"
 
   livecheck do
@@ -14,10 +14,12 @@ class RsrpcBridge < Formula
   depends_on :linux
 
   def install
+    # The archive wraps its contents in a directory named after it.
+    src = Dir["rsrpc-bridge-*/"].fetch(0)
     # bridge.sh resolves rsrpc-bridge.exe from its own directory and passes it
     # into the game's Proton prefix, so the pair stays side by side and neither
     # goes on PATH: the exe is not runnable on the host.
-    libexec.install "rsrpc-bridge.exe", "bridge.sh"
+    libexec.install "#{src}rsrpc-bridge.exe", "#{src}bridge.sh"
     chmod 0755, libexec/"bridge.sh"
   end
 

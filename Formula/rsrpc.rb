@@ -1,7 +1,7 @@
 class Rsrpc < Formula
   desc "Discord Rich Presence server for Linux and macOS"
   homepage "https://github.com/Delnegend/rsRPC"
-  version "0.29.2"
+  version "0.29.5"
   license "MIT"
 
   livecheck do
@@ -11,26 +11,26 @@ class Rsrpc < Formula
 
   on_macos do
     on_arm do
-      url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.2/rsrpc-0.29.2-aarch64-apple-darwin.zip"
-      sha256 "3d1cd7b47dcd4b608ec811366529951ed5e523e111370be8e38fce67185e9a5d"
+      url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.5/rsrpc-0.29.5-aarch64-apple-darwin.tar.xz"
+      sha256 "1f8e5615c1b6ffb1741813acd6008df2f2981508ccbc44beb775bf09c62693d1"
     end
     # No prebuilt macos-x86_64 artifact yet, so build from the release tag.
     on_intel do
-      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.2.tar.gz"
-      sha256 "173dc5b7121e6f9ab598aeba11fc930ba50cd417112d61d21236fd68cc6ee1f6"
+      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.5.tar.gz"
+      sha256 "5d74f8600bc9dfb7b4f43a073cedb1e3b422f128c7b1329103205811f46cd582"
       depends_on "rust" => :build
     end
   end
 
   on_linux do
     on_intel do
-      url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.2/rsrpc-0.29.2-x86_64-unknown-linux-gnu.zip"
-      sha256 "c597fe1b241d3c1f51ac9aaba693029cc3819d631a9b06f520561886268d5c02"
+      url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.5/rsrpc-0.29.5-x86_64-unknown-linux-gnu.tar.xz"
+      sha256 "7ddc0dcf857fe6cd57ace60ddbb95b2f956cf4aedd015c3b2ab6e9a0c581f7f8"
     end
     # No prebuilt linux-arm64 artifact yet, so build from the release tag.
     on_arm do
-      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.2.tar.gz"
-      sha256 "173dc5b7121e6f9ab598aeba11fc930ba50cd417112d61d21236fd68cc6ee1f6"
+      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.5.tar.gz"
+      sha256 "5d74f8600bc9dfb7b4f43a073cedb1e3b422f128c7b1329103205811f46cd582"
       depends_on "rust" => :build
     end
   end
@@ -60,7 +60,7 @@ class Rsrpc < Formula
       system "cargo", "install", "--path", "crates/cli", "--root", prefix
       bin.install bin/"rsrpc-cli" => "rsrpc"
     else
-      bin.install Dir["rsrpc-*"].fetch(0) => "rsrpc"
+      bin.install Dir["rsrpc-*/rsrpc-cli*"].fetch(0) => "rsrpc"
     end
   end
 
