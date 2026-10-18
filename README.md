@@ -40,7 +40,8 @@ brew upgrade
 | `brave-origin-nightly` | Same browser, nightly channel |
 | `forgejo-mcp` | MCP server for Forgejo ([repo](https://git.b4mad.industries/agentic-forges/forgejo-mcp)) |
 | `mikrotik-mcp` | MCP server for MikroTik routers ([repo](https://github.com/Delnegend/mikrotik-mcp-server)) |
-| `rsrpc` | Alternative Discord RPC server ([repo](https://github.com/SpikeHD/rsRPC)) |
+| `rsrpc` | Discord Rich Presence server ([repo](https://github.com/Delnegend/rsRPC)) — fork of [SpikeHD/rsRPC](https://github.com/SpikeHD/rsRPC) |
+| `rsrpc-bridge` | Proton/Wine IPC bridge for the above ([repo](https://github.com/Delnegend/rsRPC)) — a Steam launch option, not a command |
 | `segotep-digital` | Segotep cooler driver and service ([repo](https://github.com/Delnegend/segotep-digital)) |
 | `tsuzuri` | Block-based notebook for the terminal ([upstream](https://github.com/jaisuriya-11/tsuzuri)) |
 

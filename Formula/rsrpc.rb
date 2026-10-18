@@ -5,8 +5,21 @@ class Rsrpc < Formula
   license "MIT"
 
   livecheck do
-    url "https://github.com/Delnegend/rsRPC/releases"
+    url :stable
     strategy :github_releases
+  end
+
+  on_macos do
+    on_arm do
+      url "https://github.com/Delnegend/rsRPC/releases/download/v0.28.1/rsrpc-aarch64-apple-darwin.zip"
+      sha256 "76c4a40d84e6261e70db8c4fff5a93df4e679df4f1628ba3204bb3d8be0bf6e9"
+    end
+    # No prebuilt macos-x86_64 artifact yet, so build from the release tag.
+    on_intel do
+      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.28.1.tar.gz"
+      sha256 "5ae5e581adc04bfb30e8b0defdb3f013912b943b587daa6110c099fad74f62fd"
+      depends_on "rust" => :build
+    end
   end
 
   on_linux do
@@ -16,18 +29,6 @@ class Rsrpc < Formula
     end
     # No prebuilt linux-arm64 artifact yet, so build from the release tag.
     on_arm do
-      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.28.1.tar.gz"
-      sha256 "5ae5e581adc04bfb30e8b0defdb3f013912b943b587daa6110c099fad74f62fd"
-      depends_on "rust" => :build
-    end
-  end
-
-  on_macos do
-    on_arm do
-      url "https://github.com/Delnegend/rsRPC/releases/download/v0.28.1/rsrpc-aarch64-apple-darwin.zip"
-      sha256 "76c4a40d84e6261e70db8c4fff5a93df4e679df4f1628ba3204bb3d8be0bf6e9"
-    end
-    on_intel do
       url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.28.1.tar.gz"
       sha256 "5ae5e581adc04bfb30e8b0defdb3f013912b943b587daa6110c099fad74f62fd"
       depends_on "rust" => :build
