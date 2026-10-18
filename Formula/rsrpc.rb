@@ -35,6 +35,21 @@ class Rsrpc < Formula
     end
   end
 
+  service do
+    # `opt_bin` survives `brew upgrade`, which `bin` does not.
+    run [opt_bin/"rsrpc"]
+    # The daemon runs until SIGINT, so keep it alive across crashes.
+    keep_alive true
+    # A port-1337 conflict is fatal by design and exits non-zero; the backoff
+    # keeps a lost startup race from spinning the unit.
+    restart_delay 5
+    # The IPC socket resolves under $XDG_RUNTIME_DIR, never the working
+    # directory, but pin it so nothing inherits the installer's cwd.
+    working_dir HOMEBREW_PREFIX
+    log_path "/tmp/rsrpc.log"
+    error_log_path "/tmp/rsrpc.error.log"
+  end
+
   def install
     if File.exist?("Cargo.toml")
       system "cargo", "install", "--path", "crates/cli", *std_cargo_args
@@ -42,6 +57,16 @@ class Rsrpc < Formula
     else
       bin.install Dir["rsrpc-*"].fetch(0) => "rsrpc"
     end
+  end
+
+  def caveats
+    <<~EOS
+      Run it as a managed background service:
+        brew services start rsrpc
+
+      Follow the logs with:
+        tail -f /tmp/rsrpc.log
+    EOS
   end
 
   test do
