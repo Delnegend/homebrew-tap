@@ -52,7 +52,12 @@ class Rsrpc < Formula
 
   def install
     if File.exist?("Cargo.toml")
-      system "cargo", "install", "--path", "crates/cli", *std_cargo_args
+      # Not `std_cargo_args`: that adds `--locked`, and a release tag cut
+      # before the lock-sync fix ships a Cargo.lock still naming the previous
+      # version, so a locked build fails on the member version alone. `cargo
+      # install` resolves the workspace itself; only third-party pins matter
+      # here, and those come from the lock as-is.
+      system "cargo", "install", "--path", "crates/cli", "--root", prefix
       bin.install bin/"rsrpc-cli" => "rsrpc"
     else
       bin.install Dir["rsrpc-*"].fetch(0) => "rsrpc"
