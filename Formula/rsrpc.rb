@@ -11,9 +11,16 @@ class Rsrpc < Formula
 
   # macOS builds from the release tag: only linux x64 ships prebuilt.
   on_macos do
-    url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.1.tar.gz"
-    sha256 "c6cd260dfe7d0c434fbbc5ccf7a258e726b9e22e716dfbc5650f02d24730ccec"
-    depends_on "rust" => :build
+    on_arm do
+      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.1.tar.gz"
+      sha256 "c6cd260dfe7d0c434fbbc5ccf7a258e726b9e22e716dfbc5650f02d24730ccec"
+      depends_on "rust" => :build
+    end
+    on_intel do
+      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.1.tar.gz"
+      sha256 "c6cd260dfe7d0c434fbbc5ccf7a258e726b9e22e716dfbc5650f02d24730ccec"
+      depends_on "rust" => :build
+    end
   end
 
   on_linux do
