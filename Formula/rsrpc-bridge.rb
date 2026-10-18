@@ -1,9 +1,9 @@
 class RsrpcBridge < Formula
   desc "Wine/Proton IPC bridge connecting Windows games to the host rsRPC socket"
   homepage "https://github.com/Delnegend/rsRPC"
-  url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.5/rsrpc-bridge-0.29.5-i686-pc-windows-gnu.zip"
-  version "0.29.5"
-  sha256 "975cc70d5cd98dceabc6f3c0abe1e8b35ad49f34c93c1ca8287e18a5a6af7e65"
+  url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.0/rsrpc-bridge-0.29.0-i686-pc-windows-gnu.zip"
+  version "0.29.0"
+  sha256 "39d57e3677cad0181781a3b937895093b6b7c1077b9f76f385b345e6131c6fa6"
   license "MIT"
 
   livecheck do
