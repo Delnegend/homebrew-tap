@@ -20,6 +20,17 @@ class SegotepDigital < Formula
     end
   end
 
+  service do
+    # `opt_bin` survives `brew upgrade`, which `bin` does not.
+    run [opt_bin/"segotep-digital", "--interval-ms", "1000"]
+    # The shipped unit uses Restart=always with a 3s delay: the daemon is
+    # expected to outlive cooler sleep and power-cycle events.
+    keep_alive true
+    restart_delay 3
+    log_path "/tmp/segotep-digital.log"
+    error_log_path "/tmp/segotep-digital.error.log"
+  end
+
   def install
     if build.head? || File.exist?("Cargo.toml")
       system "cargo", "install", *std_cargo_args
@@ -41,13 +52,17 @@ class SegotepDigital < Formula
 
         segotep-digital -v
 
-      Or as a background daemon via systemd --user, reusing the shipped unit:
+      Or as a managed background service:
 
-        mkdir -p ~/.config/systemd/user
-        sed -e 's|/usr/local/bin|#{HOMEBREW_PREFIX}/bin|' -e 's|multi-user.target|default.target|' \\
-          #{opt_pkgshare}/segotep-digital.service > ~/.config/systemd/user/segotep-digital.service
-        systemctl --user daemon-reload
-        systemctl --user enable --now segotep-digital.service
+        brew services start segotep-digital
+
+      Follow the logs with:
+
+        tail -f /tmp/segotep-digital.log
+
+      Only one daemon may drive the display at a time: a second instance opens
+      the same HID device without complaining, so stop any existing unit before
+      starting this one.
     EOS
   end
 
