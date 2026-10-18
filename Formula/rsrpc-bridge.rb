@@ -14,8 +14,10 @@ class RsrpcBridge < Formula
   depends_on :linux
 
   def install
-    # The archive wraps its contents in a directory named after it.
-    src = Dir["rsrpc-bridge-*/"].fetch(0)
+    # The release archive wraps its contents in a directory named after
+    # itself. Searched recursively so the formula does not care how deep that
+    # wrapper sits.
+    src = File.dirname(Dir["**/bridge.sh"].fetch(0)) + "/"
     # bridge.sh resolves rsrpc-bridge.exe from its own directory and passes it
     # into the game's Proton prefix, so the pair stays side by side and neither
     # goes on PATH: the exe is not runnable on the host.

@@ -60,7 +60,10 @@ class Rsrpc < Formula
       system "cargo", "install", "--path", "crates/cli", "--root", prefix
       bin.install bin/"rsrpc-cli" => "rsrpc"
     else
-      bin.install Dir["rsrpc-*/rsrpc-cli*"].fetch(0) => "rsrpc"
+      # The release archive wraps its contents in a directory named after
+      # itself. Searched recursively so the formula does not care how deep
+      # that wrapper sits.
+      bin.install Dir["**/rsrpc-cli*"].fetch(0) => "rsrpc"
     end
   end
 
