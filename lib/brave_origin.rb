@@ -27,16 +27,25 @@ class BraveOriginFormula < Formula
     end
     # Homebrew publishes the desktop entry and icon into the prefix's share
     # directory but does not tell the caches desktop environments read about
-    # them, so the menu entry shows up with a blank icon. These have to be
-    # declared per formula: `post_install_steps` marks the class it is called
-    # on, and a subclass does not inherit the flag.
+    # them, so the menu entry shows up with a blank icon or not at all: GNOME
+    # needs the icon cache and mimeinfo database refreshed, while KDE Plasma
+    # keeps its own menu cache (ksycoca) that only `kbuildsycoca` rebuilds.
+    # These have to be declared per formula: `post_install_steps` marks the
+    # class it is called on, and a subclass does not inherit the flag.
     post_install_steps do
       # Homebrew's own `update_gtk_icon_cache` and `update_desktop_database`
       # steps need the `gtk+3` and `desktop-file-utils` formulae installed and
-      # fail without them, so run whichever tools PATH offers. A missing one is
-      # not worth failing an install over.
+      # fail without them, so run whichever tools PATH offers. Both Plasma 5
+      # and 6 rebuilders are attempted because only one exists per system; the
+      # `run` step resolves bare names via PATH and a missing tool is not
+      # worth failing an install over. The KDE rebuild only picks up entries in
+      # directories already on `XDG_DATA_DIRS`. It also runs inside Homebrew's
+      # sandbox with an isolated HOME, so on some systems it cannot reach the
+      # live session cache and the caveats' manual command is the real fix.
       run "gtk-update-icon-cache", args: ["-qtf", HOMEBREW_PREFIX/"share/icons/hicolor"], must_succeed: false
       run "update-desktop-database", args: [HOMEBREW_PREFIX/"share/applications"], must_succeed: false
+      run "kbuildsycoca6", must_succeed: false
+      run "kbuildsycoca5", must_succeed: false
     end
   end
 
