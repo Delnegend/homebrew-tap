@@ -116,16 +116,32 @@ class BraveOriginFormula < Formula
         or start the browser with `--no-sandbox`.
 
         The menu entry and its icon ship with the browser, and Homebrew links
-        them into `#{HOMEBREW_PREFIX}/share`. Desktop environments only scan
-        that directory when it is on `XDG_DATA_DIRS`, so add this to your shell
-        profile and log back in -- it also publishes the desktop files of every
-        other brew formula:
+        them into `#{HOMEBREW_PREFIX}/share`. That directory is not on any
+        desktop environment's default search path, so the entry stays invisible
+        until it is published somewhere that is. Point the links at the prefix
+        rather than at the Cellar, because `brew upgrade` repoints the prefix
+        links but leaves a Cellar link dangling once it prunes the old version:
 
-          export XDG_DATA_DIRS="#{HOMEBREW_PREFIX}/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
+          mkdir -p ~/.local/share/applications ~/.local/share/icons/hicolor/256x256/apps
+          ln -sfn #{HOMEBREW_PREFIX}/share/applications/#{channel}.desktop ~/.local/share/applications/#{channel}.desktop
+          ln -sfn #{HOMEBREW_PREFIX}/share/icons/hicolor/256x256/apps/#{channel}.png ~/.local/share/icons/hicolor/256x256/apps/#{channel}.png
 
-        To publish only this one instead, link both files into `~/.local/share`
-        (`applications/` and `icons/hicolor/256x256/apps/`), and remove those
-        links again when uninstalling.
+        `~/.local/share` is the default `XDG_DATA_HOME`, which every desktop
+        environment already scans, so this needs no environment variable and no
+        logout. Remove the two links again when uninstalling.
+
+        On KDE Plasma the menu cache also has to be rebuilt for a newly
+        published entry to appear; the install already runs `kbuildsycoca`, but
+        run it by hand if the entry is still missing:
+
+          kbuildsycoca6 || kbuildsycoca5
+
+        Adding the prefix to `XDG_DATA_DIRS` publishes the desktop files of every
+        other brew formula too, but not on a host with Flatpak installed: the
+        `60-flatpak` user environment generator resets `XDG_DATA_DIRS` after
+        `environment.d` has been read. Confirm before relying on it with
+
+          systemctl --user show-environment | grep XDG_DATA_DIRS
 
         All three channels share one profile directory,
         `~/.config/BraveSoftware/Brave-Origin`. Start them with separate
