@@ -57,13 +57,19 @@ class Rsrpc < Formula
       # version, so a locked build fails on the member version alone. `cargo
       # install` resolves the workspace itself; only third-party pins matter
       # here, and those come from the lock as-is.
-      system "cargo", "install", "--path", "crates/cli", "--root", prefix
-      bin.install bin/"rsrpc-cli" => "rsrpc"
+      #
+      # The crate and its binary moved (`crates/cli` -> `crates/rsrpc`,
+      # `rsrpc-cli` -> `rsrpc`). A tag older than the move still carries the
+      # old names, so take whichever this tag has rather than assume.
+      cli = Dir["crates/cli", "crates/rsrpc"].first
+      system "cargo", "install", "--path", cli, "--root", prefix
+      bin.install Dir["bin/rsrpc", "bin/rsrpc-cli"].first => "rsrpc"
     else
       # The release archive wraps its contents in a directory named after
-      # itself. Searched recursively so the formula does not care how deep
-      # that wrapper sits.
-      bin.install Dir["**/rsrpc-cli*"].fetch(0) => "rsrpc"
+      # itself, which now shares the binary's name. Searched recursively so the
+      # formula does not care how deep that wrapper sits, and narrowed to
+      # files so the wrapper cannot be picked instead of the binary.
+      bin.install Dir["**/rsrpc*"].find { |f| File.file?(f) } => "rsrpc"
     end
   end
 
@@ -78,6 +84,8 @@ class Rsrpc < Formula
   end
 
   test do
-    assert_match "rsrpc-cli #{version}", shell_output("#{bin}/rsrpc --version")
+    # Assert the version, not the binary's own name: older releases still
+    # report `rsrpc-cli` there.
+    assert_match version.to_s, shell_output("#{bin}/rsrpc --version")
   end
 end
