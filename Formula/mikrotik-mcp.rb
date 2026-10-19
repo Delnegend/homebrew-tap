@@ -13,10 +13,14 @@ class MikrotikMcp < Formula
     depends_on "go" => :build
   end
 
+  # Prebuilt binaries ship for Linux x64 and Windows x64 only. Every other
+  # platform builds from the source tag, so the formula and the release
+  # assets cannot disagree about what exists.
   on_macos do
     on_arm do
-      url "https://github.com/Delnegend/mikrotik-mcp-server/releases/download/v0.4.1/mikrotik-mcp-0.4.1-darwin-arm64.tar.xz"
-      sha256 "32bfece9dffd1891b46577110a2cedda95831a37de2150e86d3190cbeb996806"
+      url "https://github.com/Delnegend/mikrotik-mcp-server/archive/refs/tags/v0.4.1.tar.gz"
+      sha256 "eab8d6ee74b6dd7cd90512c2ae72f8a891821eeaf8d3a51185f100c8610182c4"
+      depends_on "go" => :build
     end
     on_intel do
       url "https://github.com/Delnegend/mikrotik-mcp-server/archive/refs/tags/v0.4.1.tar.gz"
@@ -27,8 +31,9 @@ class MikrotikMcp < Formula
 
   on_linux do
     on_arm do
-      url "https://github.com/Delnegend/mikrotik-mcp-server/releases/download/v0.4.1/mikrotik-mcp-0.4.1-linux-arm64.tar.xz"
-      sha256 "a83304f31e24a2860da08d2b213fec68df746351ac62dd233a2750d2a2fedef5"
+      url "https://github.com/Delnegend/mikrotik-mcp-server/archive/refs/tags/v0.4.1.tar.gz"
+      sha256 "eab8d6ee74b6dd7cd90512c2ae72f8a891821eeaf8d3a51185f100c8610182c4"
+      depends_on "go" => :build
     end
     on_intel do
       url "https://github.com/Delnegend/mikrotik-mcp-server/releases/download/v0.4.1/mikrotik-mcp-0.4.1-linux-amd64.tar.xz"
