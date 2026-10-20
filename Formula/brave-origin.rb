@@ -7,13 +7,13 @@ class BraveOrigin < BraveOriginFormula
 
   # Upstream ships every stable release for both architectures.
   on_intel do
-    url "https://github.com/brave/brave-browser/releases/download/v1.98.58/brave-origin-1.98.58-linux-amd64.zip"
-    sha256 "b8a8670c79ac9d3b494acd2513eb825a5320b4cfb7096d036134bb93eee4eccd"
+    url "https://github.com/brave/brave-browser/releases/download/v1.98.59/brave-origin-1.98.59-linux-amd64.zip"
+    sha256 "bbbfea5d7dae21a1fcbd52fc8b23882a5dee2521ac72292f9e30b1a2519819e2"
   end
 
   on_arm do
-    url "https://github.com/brave/brave-browser/releases/download/v1.98.58/brave-origin-1.98.58-linux-arm64.zip"
-    sha256 "af29ebfe9f5e6d25b09ed77495fb22e52203e25289b18348cdcf39d2707b0c2c"
+    url "https://github.com/brave/brave-browser/releases/download/v1.98.59/brave-origin-1.98.59-linux-arm64.zip"
+    sha256 "3b7e879e293bd8de2b078dc87755a12f03b3b533f5778ae82a76d7f9500cb458"
   end
 
   channel "brave-origin"
