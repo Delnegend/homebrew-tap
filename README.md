@@ -44,6 +44,7 @@ brew upgrade
 | `rsrpc-bridge` | Proton/Wine IPC bridge for the above ([repo](https://github.com/Delnegend/rsRPC)) — a Steam launch option, not a command |
 | `segotep-digital` | Segotep cooler driver and service ([repo](https://github.com/Delnegend/segotep-digital)) |
 | `tsuzuri` | Block-based notebook for the terminal ([upstream](https://github.com/jaisuriya-11/tsuzuri)) |
+| `zero-g` | OpenAI-compatible proxy for Google Antigravity subscriptions ([repo](https://github.com/Delnegend/zero-g)) |
 
 ## License
 
