@@ -14,13 +14,9 @@ class RsrpcBridge < Formula
   depends_on :linux
 
   def install
-    # The release archive wraps its contents in a directory named after
-    # itself. Searched recursively so the formula does not care how deep that
-    # wrapper sits.
+    # Locate extracted assets inside the wrapper directory.
     src = File.dirname(Dir["**/bridge.sh"].fetch(0)) + "/"
-    # bridge.sh resolves rsrpc-bridge.exe from its own directory and passes it
-    # into the game's Proton prefix, so the pair stays side by side and neither
-    # goes on PATH: the exe is not runnable on the host.
+    # bridge.sh and rsrpc-bridge.exe stay in libexec since the exe runs in Wine.
     libexec.install "#{src}rsrpc-bridge.exe", "#{src}bridge.sh"
     chmod 0755, libexec/"bridge.sh"
   end
@@ -33,8 +29,7 @@ class RsrpcBridge < Formula
   end
 
   test do
-    # The bridge is a windows-gnu exe meant to run inside a Wine prefix, so
-    # the test only asserts the pair that Steam launch options depend on.
+    # Windows binary runs in Wine; assert presence and launcher permissions.
     assert_path_exists "#{libexec}/rsrpc-bridge.exe"
     assert_predicate libexec/"bridge.sh", :executable?
   end

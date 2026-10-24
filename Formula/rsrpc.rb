@@ -53,23 +53,12 @@ class Rsrpc < Formula
 
   def install
     if File.exist?("Cargo.toml")
-      # Not `std_cargo_args`: that adds `--locked`, and a release tag cut
-      # before the lock-sync fix ships a Cargo.lock still naming the previous
-      # version, so a locked build fails on the member version alone. `cargo
-      # install` resolves the workspace itself; only third-party pins matter
-      # here, and those come from the lock as-is.
-      #
-      # The crate and its binary moved (`crates/cli` -> `crates/rsrpc`,
-      # `rsrpc-cli` -> `rsrpc`). A tag older than the move still carries the
-      # old names, so take whichever this tag has rather than assume.
+      # Install crate without std_cargo_args --locked flag.
       cli = Dir["crates/cli", "crates/rsrpc"].first
       system "cargo", "install", "--path", cli, "--root", prefix
       bin.install Dir["bin/rsrpc", "bin/rsrpc-cli"].first => "rsrpc"
     else
-      # The release archive wraps its contents in a directory named after
-      # itself, which now shares the binary's name. Searched recursively so the
-      # formula does not care how deep that wrapper sits, and narrowed to
-      # files so the wrapper cannot be picked instead of the binary.
+      # Extract binary from release archive wrapper directory.
       bin.install Dir["**/rsrpc*"].find { |f| File.file?(f) } => "rsrpc"
     end
   end
