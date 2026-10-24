@@ -53,6 +53,6 @@ class ZeroG < Formula
   end
 
   test do
-    assert_match "OpenAI-compatible proxy", shell_output("#{bin}/zero-g --help")
+    assert_match version.to_s, shell_output("#{bin}/zero-g --version")
   end
 end
