@@ -1,7 +1,7 @@
 class ZeroG < Formula
   desc "OpenAI-compatible proxy for Google Antigravity subscriptions"
   homepage "https://github.com/Delnegend/zero-g"
-  version "0.5.2"
+  version "0.5.4"
   license any_of: ["MIT", "Apache-2.0"]
 
   livecheck do
@@ -11,8 +11,8 @@ class ZeroG < Formula
 
   on_linux do
     on_intel do
-      url "https://github.com/Delnegend/zero-g/releases/download/v0.5.2/zero-g-0.5.2-x86_64-unknown-linux-gnu.tar.xz"
-      sha256 "bba6f81a29a6b806f78f0a5d18afa728f704b9b380c3e35a98d0cfe506d959bb"
+      url "https://github.com/Delnegend/zero-g/releases/download/v0.5.4/zero-g-0.5.4-x86_64-unknown-linux-gnu.tar.xz"
+      sha256 "206f04e81b2cc74de9def9e9202d7ec6049087733897bf5a99943d76ce2d707d"
     end
   end
 
