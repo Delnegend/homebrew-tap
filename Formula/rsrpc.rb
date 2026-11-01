@@ -1,7 +1,7 @@
 class Rsrpc < Formula
   desc "Discord Rich Presence server for Linux and macOS"
   homepage "https://github.com/Delnegend/rsRPC"
-  version "0.29.3"
+  version "0.29.4"
   license "MIT"
 
   livecheck do
@@ -12,26 +12,26 @@ class Rsrpc < Formula
   # macOS builds from the release tag: only linux x64 ships prebuilt.
   on_macos do
     on_arm do
-      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.3.tar.gz"
-      sha256 "810b1c1f06fd5a671216e253642470c32b255d37945250c012575b5cd142b6fa"
+      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.4.tar.gz"
+      sha256 "294ef3f9bf6513ebd554ee127264a23d92382b7e2c454b41a6000ab00851ab95"
       depends_on "rust" => :build
     end
     on_intel do
-      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.3.tar.gz"
-      sha256 "810b1c1f06fd5a671216e253642470c32b255d37945250c012575b5cd142b6fa"
+      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.4.tar.gz"
+      sha256 "294ef3f9bf6513ebd554ee127264a23d92382b7e2c454b41a6000ab00851ab95"
       depends_on "rust" => :build
     end
   end
 
   on_linux do
     on_intel do
-      url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.3/rsrpc-0.29.3-x86_64-unknown-linux-gnu.tar.xz"
-      sha256 "5119ae8366c1395a8aa05e3b90e3e79a6d090c5fe1108fdd680830339bdc3b46"
+      url "https://github.com/Delnegend/rsRPC/releases/download/v0.29.4/rsrpc-0.29.4-x86_64-unknown-linux-gnu.tar.xz"
+      sha256 "0052a22b4c3a7bf2846311762fe9d69dee6de0f492902bdc763d072fc8de5a15"
     end
     # No prebuilt linux-arm64 artifact yet, so build from the release tag.
     on_arm do
-      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.3.tar.gz"
-      sha256 "810b1c1f06fd5a671216e253642470c32b255d37945250c012575b5cd142b6fa"
+      url "https://github.com/Delnegend/rsRPC/archive/refs/tags/v0.29.4.tar.gz"
+      sha256 "294ef3f9bf6513ebd554ee127264a23d92382b7e2c454b41a6000ab00851ab95"
       depends_on "rust" => :build
     end
   end
