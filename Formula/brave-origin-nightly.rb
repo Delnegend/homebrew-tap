@@ -6,8 +6,8 @@ class BraveOriginNightly < BraveOriginFormula
   # Upstream ships the arm64 archive for this channel only intermittently
   # (1.99.7 has one, 1.99.9 does not), so nightly stays amd64-only until every
   # release carries it.
-  url "https://github.com/brave/brave-browser/releases/download/v1.101.11/brave-origin-nightly-1.101.11-linux-amd64.zip"
-  sha256 "e7f6c7b04706a258a84f81f6e2798accafedaef536d6801f1218349e904b6a71"
+  url "https://github.com/brave/brave-browser/releases/download/v1.101.15/brave-origin-nightly-1.101.15-linux-amd64.zip"
+  sha256 "61002e9430dfe9a2f244eda0ced972b9acf4a617719b81e3d65b87e5ec4f2702"
   license "MPL-2.0"
 
   channel "brave-origin-nightly"
