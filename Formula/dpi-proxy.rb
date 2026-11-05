@@ -2,7 +2,6 @@ class DpiProxy < Formula
   desc "HTTP proxy for networks with traffic inspection"
   homepage "https://github.com/Delnegend/dpi-proxy"
   url "https://github.com/Delnegend/dpi-proxy/releases/download/v0.1.0/dpi-proxy-0.1.0-x86_64-unknown-linux-musl.tar.xz"
-  version "0.1.0"
   sha256 "6977e1db628e5b0987e9094b6e211d05e57b4e6713b798f1d3a18d385b55a6f9"
   license any_of: ["MIT", "Apache-2.0"]
 
@@ -11,8 +10,8 @@ class DpiProxy < Formula
     strategy :github_releases
   end
 
-  depends_on :linux
   depends_on arch: :x86_64
+  depends_on :linux
 
   def install
     bin.install "dpi-proxy"
@@ -54,7 +53,11 @@ class DpiProxy < Formula
         assert_match "GET /test HTTP/1.1", upstream.value
       end
     ensure
-      Process.kill("TERM", pid) rescue nil
+      begin
+        Process.kill("TERM", pid)
+      rescue Errno::ESRCH
+        # The proxy may have exited before the test finished.
+      end
       Process.wait(pid)
       origin.close
       upstream.kill
