@@ -17,6 +17,18 @@ class DpiProxy < Formula
     bin.install "dpi-proxy"
   end
 
+  service do
+    run [opt_bin/"dpi-proxy"]
+    keep_alive true
+    restart_delay 3
+    working_dir HOMEBREW_PREFIX
+    environment_variables DPI_PROXY_HOST:           "127.0.0.1",
+                          DPI_PROXY_PORT:           "18118",
+                          DPI_PROXY_SPLIT_SNI:      "true",
+                          DPI_PROXY_RETRY_ON_RESET: "true",
+                          DPI_PROXY_TIMEOUT_SECS:   "3"
+  end
+
   test do
     require "socket"
     require "timeout"
