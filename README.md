@@ -38,6 +38,7 @@ brew upgrade
 | `brave-origin` | Brave browser, every feature on, from the upstream Linux release zip ([upstream](https://github.com/brave/brave-browser)) |
 | `brave-origin-beta` | Same browser, beta channel |
 | `brave-origin-nightly` | Same browser, nightly channel |
+| `dpi-proxy` | HTTP proxy that helps applications reach services blocked by network traffic inspection ([repo](https://github.com/Delnegend/dpi-proxy)) — Linux x86-64 |
 | `forgejo-mcp` | MCP server for Forgejo ([repo](https://git.b4mad.industries/agentic-forges/forgejo-mcp)) |
 | `mikrotik-mcp` | MCP server for MikroTik routers ([repo](https://github.com/Delnegend/mikrotik-mcp-server)) |
 | `rsrpc` | Discord Rich Presence server ([repo](https://github.com/Delnegend/rsRPC)) — fork of [SpikeHD/rsRPC](https://github.com/SpikeHD/rsRPC) |
