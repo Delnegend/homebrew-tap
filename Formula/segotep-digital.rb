@@ -45,7 +45,7 @@ class SegotepDigital < Formula
 
   def caveats
     <<~EOS
-      Runs entirely in userspace — no root privileges, udev rules, or system
+      Runs entirely in userspace; no root privileges, udev rules, or system
       service required. USB HID and telemetry are accessed directly.
 
       Run in the foreground (Ctrl+C to stop):
