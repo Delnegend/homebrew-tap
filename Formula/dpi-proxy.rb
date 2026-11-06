@@ -26,7 +26,7 @@ class DpiProxy < Formula
                           DPI_PROXY_PORT:           "18118",
                           DPI_PROXY_SPLIT_SNI:      "true",
                           DPI_PROXY_RETRY_ON_RESET: "true",
-                          DPI_PROXY_TIMEOUT_SECS:   "3"
+                          DPI_PROXY_TIMEOUT_SECS:   "6"
   end
 
   test do
