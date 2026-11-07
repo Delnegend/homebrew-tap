@@ -44,12 +44,12 @@ SUMMARY_FILE = "/tmp/updated.txt"
 
 GITHUB_SLUG = re.compile(r'https://github\.com/([^/"]+/[^/"]+)')
 URL_LINE = re.compile(r'^\s*url "([^"]+)"', re.MULTILINE)
-CURRENT_VERSION = re.compile(r'version "(\d+\.\d+\.\d+)"')
-TAG_VERSION = re.compile(r"tags/v(\d+\.\d+\.\d+)")
-DOWNLOAD_VERSION = re.compile(r"releases/download/v(\d+\.\d+\.\d+)")
+CURRENT_VERSION = re.compile(r'version "(\d+(?:\.\d+)+)"')
+TAG_VERSION = re.compile(r"tags/v(\d+(?:\.\d+)+)")
+DOWNLOAD_VERSION = re.compile(r"releases/download/v(\d+(?:\.\d+)+)")
 VERSION_LINE = re.compile(r"^\s*(url|head) \"")
 SHA256_LINE = re.compile(r'sha256 "[a-f0-9]*"')
-TAG = re.compile(r"^v\d+\.\d+\.\d+$")
+TAG = re.compile(r"^v\d+(?:\.\d+)+$")
 
 RELEASE_CACHE: dict[tuple[str, int], list] = {}
 
@@ -74,8 +74,14 @@ def newest_asset_version(repo: str, asset_name: str, current: str) -> str | None
 
     One page of hits is enough in practice; scanning further only costs quota.
     """
-    prefix, _, suffix = asset_name.partition(current)
-    pattern = re.compile(rf"^{re.escape(prefix)}(\d+\.\d+\.\d+){re.escape(suffix)}$")
+    if current in asset_name:
+        prefix, _, suffix = asset_name.partition(current)
+        pattern = re.compile(rf"^{re.escape(prefix)}(\d+(?:\.\d+)+){re.escape(suffix)}$")
+        version_from_asset = True
+    else:
+        pattern = re.compile(rf"^{re.escape(asset_name)}$")
+        version_from_asset = False
+
     headers = {"Accept": "application/vnd.github+json"}
     token = os.environ.get("GH_TOKEN")
     if token:
@@ -98,12 +104,20 @@ def newest_asset_version(repo: str, asset_name: str, current: str) -> str | None
             RELEASE_CACHE[(repo, page)] = releases
         if not releases:
             return None
-        versions = [
-            match.group(1)
-            for release in releases
-            for asset in release.get("assets") or []
-            if (match := pattern.fullmatch(asset.get("name") or ""))
-        ]
+        versions = []
+        for release in releases:
+            if release.get("draft"):
+                continue
+            tag_name = release.get("tag_name") or ""
+            tag_version = tag_name.lstrip("v")
+            assets = release.get("assets") or []
+            for asset in assets:
+                name = asset.get("name") or ""
+                if match := pattern.fullmatch(name):
+                    if version_from_asset:
+                        versions.append(match.group(1))
+                    elif re.fullmatch(r"\d+(?:\.\d+)+", tag_version):
+                        versions.append(tag_version)
         best = highest(versions)
         if best is not None:
             return best
@@ -141,13 +155,14 @@ def sha256(url: str) -> str | None:
         return None
 
 
-def refresh_checksums(source: str, latest: str, warnings: list[str]) -> str:
+def refresh_checksums(source: str, latest: str, warnings: list[str]) -> str | None:
     """Refetch every versioned url and rewrite the sha256 on the line below it.
 
     A formula can carry several (one per architecture), so these run together.
+    Returns the rewritten source, or None if any fetch failed.
     """
     lines = source.split("\n")
-    versioned = re.compile(rf"v{re.escape(latest)}|_{re.escape(latest)}_")
+    versioned = re.compile(rf"v{re.escape(latest)}|_{re.escape(latest)}_|/{re.escape(latest)}/")
 
     targets = []
     for index, line in enumerate(lines):
@@ -157,21 +172,32 @@ def refresh_checksums(source: str, latest: str, warnings: list[str]) -> str:
         offset = next((i for i, entry in enumerate(lines[index + 1 :]) if SHA256_LINE.search(entry)), None)
         if offset is None:
             warnings.append(f"no sha256 line follows {url.group(1)}")
-            continue
+            return None
         targets.append((url.group(1), index + 1 + offset))
 
+    if not targets:
+        warnings.append(f"no versioned URLs found matching v{latest}")
+        return None
+
+    failed = False
+
     def fetch(target: tuple[str, int]) -> tuple[int, str] | None:
+        nonlocal failed
         url, sha_index = target
         print(f"Fetching {url} ...")
         checksum = sha256(url)
         if checksum is None:
             warnings.append(f"Failed to fetch {url}")
+            failed = True
             return None
         print(f"  sha256 {checksum}")
         return sha_index, checksum
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=len(targets) or 1) as pool:
         checksums = [check for check in pool.map(fetch, targets) if check is not None]
+
+    if failed or len(checksums) != len(targets):
+        return None
 
     for sha_index, checksum in checksums:
         lines[sha_index] = SHA256_LINE.sub(f'sha256 "{checksum}"', lines[sha_index])
@@ -204,9 +230,15 @@ def update_formula(path: str) -> Result:
             result.warnings.append(f"{path}: could not determine current version")
             return result
 
-        asset = download_url.group(1).rsplit("/", 1)[-1] if download_url else ""
+        download_urls = [m.group(1) for m in URL_LINE.finditer(original)]
+        release_assets = [
+            url.rsplit("/", 1)[-1]
+            for url in download_urls
+            if "/releases/download/" in url
+        ]
+        asset = release_assets[0] if release_assets else ""
         latest = None
-        if repo and download_url and "/releases/download/" in download_url.group(1) and current in asset:
+        if repo and release_assets:
             latest = newest_asset_version(repo, asset, current)
             if latest is None:
                 result.warnings.append(f"{path}: no release asset matching {asset}")
@@ -228,7 +260,11 @@ def update_formula(path: str) -> Result:
         updated = "\n".join(
             carried.sub(latest, line) if VERSION_LINE.match(line) else line for line in updated.split("\n")
         )
-        updated = refresh_checksums(updated, latest, result.warnings)
+        updated_source = refresh_checksums(updated, latest, result.warnings)
+        if updated_source is None:
+            result.warnings.append(f"{path}: failed to refresh checksums for v{latest}, leaving unchanged")
+            return result
+        updated = updated_source
 
         if updated != original:
             Path(path).write_text(updated)
