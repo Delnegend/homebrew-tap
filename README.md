@@ -26,7 +26,7 @@ brew upgrade
 ## Highlights
 
 - **One install line per tool**: no release pages, no asset names, no `chmod +x` dance.
-- **Updated by a bot, not by hand**: a scheduled workflow watches every upstream release and commits the version bump straight to `main` hourly.
+- **Automatic updates**: a scheduled workflow checks supported upstream releases hourly; commit-pinned formulas are updated manually.
 - **Shared formula machinery**: the three Brave Origin channels declare only their channel and inherit the install, livecheck, and desktop entry from one body.
 - **A tap that documents itself**: every formula states its `desc` and `homepage`, so `brew info` answers before the README has to.
 

@@ -211,6 +211,9 @@ def update_formula(path: str) -> Result:
     """
     result = Result(path=path)
     original = Path(path).read_text()
+    if re.search(r'livecheck\s+do\s+skip\s+"', original):
+        result.notices.append(f"{path}: livecheck skipped; update manually")
+        return result
 
     try:
         download_url = URL_LINE.search(original)
