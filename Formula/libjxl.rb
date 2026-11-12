@@ -1,8 +1,8 @@
 class Libjxl < Formula
   desc "JPEG XL reference implementation (cjxl and djxl binaries)"
   homepage "https://github.com/libjxl/libjxl"
-  url "https://github.com/libjxl/libjxl/releases/download/v0.12.0/jxl-linux-x86_64-static.tar.lz"
-  sha256 "5318a1ea40adad76d023e0c17a03d4627f8282f83cb2b575e69be8e74f1ff456"
+  url "https://github.com/libjxl/libjxl/releases/download/v0.13.0/jxl-linux-x86_64-static.tar.lz"
+  sha256 "637599dae477dbb4e6d6ee71b0554e8a65c20dc25fd2892cf2bebb935d54d527"
   license "BSD-3-Clause"
 
   livecheck do
