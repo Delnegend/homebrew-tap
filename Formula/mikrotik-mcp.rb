@@ -1,7 +1,7 @@
 class MikrotikMcp < Formula
   desc "MCP server for managing MikroTik routers through the RouterOS API"
   homepage "https://github.com/Delnegend/mikrotik-mcp-server"
-  version "0.4.3"
+  version "0.4.4"
   license "MIT"
 
   livecheck do
@@ -18,26 +18,26 @@ class MikrotikMcp < Formula
   # assets cannot disagree about what exists.
   on_macos do
     on_arm do
-      url "https://github.com/Delnegend/mikrotik-mcp-server/archive/refs/tags/v0.4.3.tar.gz"
-      sha256 "9181b35e78f903ea7f9297b41ad4a4d3acc1880e7bf9fc2a06546d1aacda4bfa"
+      url "https://github.com/Delnegend/mikrotik-mcp-server/archive/refs/tags/v0.4.4.tar.gz"
+      sha256 "29e45b0557306cc747387e92f5335aec6b992ba24fa19ec3874ec26bfb308b4b"
       depends_on "go" => :build
     end
     on_intel do
-      url "https://github.com/Delnegend/mikrotik-mcp-server/archive/refs/tags/v0.4.3.tar.gz"
-      sha256 "9181b35e78f903ea7f9297b41ad4a4d3acc1880e7bf9fc2a06546d1aacda4bfa"
+      url "https://github.com/Delnegend/mikrotik-mcp-server/archive/refs/tags/v0.4.4.tar.gz"
+      sha256 "29e45b0557306cc747387e92f5335aec6b992ba24fa19ec3874ec26bfb308b4b"
       depends_on "go" => :build
     end
   end
 
   on_linux do
     on_arm do
-      url "https://github.com/Delnegend/mikrotik-mcp-server/archive/refs/tags/v0.4.3.tar.gz"
-      sha256 "9181b35e78f903ea7f9297b41ad4a4d3acc1880e7bf9fc2a06546d1aacda4bfa"
+      url "https://github.com/Delnegend/mikrotik-mcp-server/archive/refs/tags/v0.4.4.tar.gz"
+      sha256 "29e45b0557306cc747387e92f5335aec6b992ba24fa19ec3874ec26bfb308b4b"
       depends_on "go" => :build
     end
     on_intel do
-      url "https://github.com/Delnegend/mikrotik-mcp-server/releases/download/v0.4.3/mikrotik-mcp-0.4.3-linux-amd64.tar.xz"
-      sha256 "b9d155ccdbca1f081fefb2d49557b6c5168ced366f6e141d0896c01121628f12"
+      url "https://github.com/Delnegend/mikrotik-mcp-server/releases/download/v0.4.4/mikrotik-mcp-0.4.4-linux-amd64.tar.xz"
+      sha256 "cc51d7a5e5bc103abe6e1de870d5eb7f6842d129d359e1dec7cdcb9e3c132f8e"
     end
   end
 
