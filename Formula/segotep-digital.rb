@@ -1,7 +1,7 @@
 class SegotepDigital < Formula
   desc "Driver and daemon for Segotep Ice Moon / Digital series AIO CPU coolers"
   homepage "https://github.com/Delnegend/segotep-digital"
-  version "1.1.5"
+  version "1.1.6"
   license any_of: ["MIT", "Apache-2.0"]
   head "https://github.com/Delnegend/segotep-digital.git" do
     depends_on "rust" => :build
@@ -11,12 +11,12 @@ class SegotepDigital < Formula
 
   on_linux do
     on_intel do
-      url "https://github.com/Delnegend/segotep-digital/releases/download/v1.1.5/segotep-digital-1.1.5-x86_64-unknown-linux-musl.tar.xz"
-      sha256 "681fb15ca8d7fc492afec5245043d302f837c42823d71df3b1d4b2443322cc33"
+      url "https://github.com/Delnegend/segotep-digital/releases/download/v1.1.6/segotep-digital-1.1.6-x86_64-unknown-linux-musl.tar.xz"
+      sha256 "f4fdbdec8e4fd5f0b70cab95bb8da7993371539cb986b3b59cdd716be650110b"
     end
     on_arm do
-      url "https://github.com/Delnegend/segotep-digital/releases/download/v1.1.5/segotep-digital-1.1.5-aarch64-unknown-linux-musl.tar.xz"
-      sha256 "5e2ca840a1aa7f4e3e09577973ea6b295b931adc5d5cf60a1c4a2af5ae103013"
+      url "https://github.com/Delnegend/segotep-digital/releases/download/v1.1.6/segotep-digital-1.1.6-aarch64-unknown-linux-musl.tar.xz"
+      sha256 "36bfab01b81eead5500c3826d45df2856e11d935d19a6a43d68c0f8b96b2a206"
     end
   end
 

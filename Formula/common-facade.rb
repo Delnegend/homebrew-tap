@@ -17,8 +17,8 @@ class CommonFacade < Formula
 
   on_linux do
     on_intel do
-      url "https://github.com/Delnegend/common-facade/releases/download/v0.1.1/common-facade-0.1.1-linux-amd64.tar.xz"
-      sha256 "eea990c4b942fe9706b9d47c962c106a30a0b99077604f80308251ab51043cbd"
+      url "https://github.com/Delnegend/common-facade/releases/download/v0.1.2/common-facade-0.1.2-linux-amd64.tar.xz"
+      sha256 "2e60db12e3c676a380a1530e8b181789dbdfcfa1eeec0713867d58db6e229fe4"
     end
   end
 
