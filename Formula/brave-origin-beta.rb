@@ -6,8 +6,8 @@ class BraveOriginBeta < BraveOriginFormula
   # Upstream ships the arm64 archive for this channel only intermittently
   # (1.98.47 has one, 1.98.48 does not), so beta stays amd64-only until every
   # release carries it.
-  url "https://github.com/brave/brave-browser/releases/download/v1.101.55/brave-origin-beta-1.101.55-linux-amd64.zip"
-  sha256 "f412b7b63ab12ed8848ddaff0c9e0600c0c09ee31958a453cbdfd740263c84d7"
+  url "https://github.com/brave/brave-browser/releases/download/v1.101.56/brave-origin-beta-1.101.56-linux-amd64.zip"
+  sha256 "576dabfeeaf28572c15d64ee51481bc25b2517ce140b25aad6efab40dcbfd48c"
   license "MPL-2.0"
 
   channel "brave-origin-beta"
