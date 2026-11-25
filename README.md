@@ -45,6 +45,7 @@ brew upgrade
 | `rsrpc-bridge` | Proton/Wine IPC bridge for the above ([repo](https://github.com/Delnegend/rsRPC)); a Steam launch option, not a command |
 | `segotep-digital` | Segotep cooler driver and service ([repo](https://github.com/Delnegend/segotep-digital)) |
 | `zero-g` | OpenAI-compatible proxy for Google Antigravity subscriptions ([repo](https://github.com/Delnegend/zero-g)) |
+| `zero-g-agy-quota` | Pushes the Antigravity CLI's quota and plan to a Zero-G gateway, as a `brew services` job ([repo](https://github.com/Delnegend/zero-g)), Linux x86-64 and arm64 |
 
 ## License
 
