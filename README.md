@@ -44,6 +44,7 @@ brew upgrade
 | `rsrpc` | Discord Rich Presence server ([repo](https://github.com/Delnegend/rsRPC)), fork of [SpikeHD/rsRPC](https://github.com/SpikeHD/rsRPC) |
 | `rsrpc-bridge` | Proton/Wine IPC bridge for the above ([repo](https://github.com/Delnegend/rsRPC)); a Steam launch option, not a command |
 | `segotep-digital` | Segotep cooler driver and service ([repo](https://github.com/Delnegend/segotep-digital)) |
+| `spacebadgers` | Fast and clean SVG badge generator, installs the `badgers-cli` command ([repo](https://github.com/SplittyDev/spacebadgers)), built from source |
 | `zero-g` | OpenAI-compatible proxy for Google Antigravity subscriptions ([repo](https://github.com/Delnegend/zero-g)) |
 | `zero-g-agy-integration` | Reports the Antigravity CLI's quota, plan and usage to a Zero-G gateway, as a `brew services` job and an `agy` hook ([repo](https://github.com/Delnegend/zero-g)), Linux x86-64 and arm64 |
 
