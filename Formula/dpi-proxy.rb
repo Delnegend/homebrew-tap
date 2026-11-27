@@ -1,8 +1,8 @@
 class DpiProxy < Formula
   desc "HTTP proxy for networks with traffic inspection"
   homepage "https://github.com/Delnegend/dpi-proxy"
-  url "https://github.com/Delnegend/dpi-proxy/releases/download/v0.7.3/dpi-proxy-0.7.3-x86_64-unknown-linux-musl.tar.xz"
-  sha256 "48fcedd516d71d191ed3dc2f291c3b09705d8091025b1316b66513af5fa591b8"
+  url "https://github.com/Delnegend/dpi-proxy/releases/download/v0.8.0/dpi-proxy-0.8.0-x86_64-unknown-linux-musl.tar.xz"
+  sha256 "b2c56d81377d46eabbd3a7ab890ff0f880e9d0535220a2816e8adb13497a867f"
   license any_of: ["MIT", "Apache-2.0"]
 
   livecheck do

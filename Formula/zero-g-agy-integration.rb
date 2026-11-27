@@ -12,12 +12,12 @@ class ZeroGAgyIntegration < Formula
 
   on_linux do
     on_intel do
-      url "https://github.com/Delnegend/zero-g/releases/download/v1.9.0/zero-g-agy-integration-1.9.0-x86_64-unknown-linux-musl.tar.xz"
-      sha256 "8e9b82c40ae00bfda54bde939f693d86874561aae738c7e7d5da50c6ba6c5b8d"
+      url "https://github.com/Delnegend/zero-g/releases/download/v1.11.0/zero-g-agy-integration-1.11.0-x86_64-unknown-linux-musl.tar.xz"
+      sha256 "382e13976dfa42d2f1991111c5526ff31fca46f901bd703623c8d6b1ac00d517"
     end
     on_arm do
-      url "https://github.com/Delnegend/zero-g/releases/download/v1.9.0/zero-g-agy-integration-1.9.0-aarch64-unknown-linux-musl.tar.xz"
-      sha256 "6048280c2e4acd5066dfd28b62f94e3c8146a95f48b8309ef05556598f3764cc"
+      url "https://github.com/Delnegend/zero-g/releases/download/v1.11.0/zero-g-agy-integration-1.11.0-aarch64-unknown-linux-musl.tar.xz"
+      sha256 "fb2482e76397d00439752546573021e0ab3c081eab79568834ebb58601280e6b"
     end
   end
 
